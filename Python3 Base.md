@@ -1,10 +1,10 @@
-##一.在linux下python3 源码的执行：
+##一.在linux下python3 源码的执行：#
     1.直接运行python3 file 
     2.在代码前添加解释器路径 #！/usr/bin/python3   可以直接运行PYHTON源码
     故可以在代码中添加该行，使用方式1 时该语句相当于注释
    
    
-##二.基础语法
+##二.基础语法#
     1.编码
       python3 默认以UTF-8为编码方式存储字符串，所有字符串都是Unicode字符串，也可指定编码方式
       # -*- coding: cp-1252 -*-
@@ -32,7 +32,7 @@
 		total = item1+\
 		       item2+\
 		       item3
-          在[ ] {} () 中的多行语句不需要反斜杠
+          在[] {} () 中的多行语句不需要反斜杠
      
    3.基本数据结构
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pyData.png)
