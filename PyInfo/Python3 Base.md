@@ -35,5 +35,5 @@
           在[] {} () 中的多行语句不需要反斜杠
      
    3.基本数据结构
-![image](https://github.com/kobeHub/Hello-world/blob/master/pyData.png)
+![image](https://github.com/kobeHub/Hello-world/blob/master/pic/pyData.png)
     
