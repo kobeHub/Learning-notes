@@ -4,7 +4,7 @@
     故可以在代码中添加该行，使用方式1 时该语句相当于注释
    
    
-# 二.基础语法#
+# 二.基础语法 
  ## 1.编码
       python3 默认以UTF-8为编码方式存储字符串，所有字符串都是Unicode字符串，也可指定编码方式
       # -*- coding: cp-1252 -*-
@@ -81,6 +81,8 @@ print('Append 655:', list1.append(655), list1)
 print('\n\n')
 
 ```
+### 运行结果：
+![image](https://github.com/kobeHub/Hello-world/blob/master/pic/test.png)
     
     
     
