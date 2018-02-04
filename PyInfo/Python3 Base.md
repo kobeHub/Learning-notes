@@ -15,7 +15,7 @@
        u  = s.decode("utf-8") #  s被解码为unicode对象，赋给u
        sg = u.encode("gbk") # u被编码为gbk格式的字节串，赋给sg
        print sg
-    ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/1.png)
+![image](https://github.com/kobeHub/Hello-world/blob/master/pic/1.png)
  
      Note: 
      1)制定编码方式为utf-8  存储的是字节码 需要解码(decode)为unicode对象<class 'unicode'>，再进行编码为其他格式此时类型为<class 'str'>
@@ -35,7 +35,7 @@
           在[] {} () 中的多行语句不需要反斜杠
      
 ##   3.基本数据结构
-        ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/pyData.png)
+![image](https://github.com/kobeHub/Hello-world/blob/master/pic/pyData.png)
 ##   4.序列对象  string list tuple
 ``` java
 #!/usr/bin/python3
