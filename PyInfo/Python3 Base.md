@@ -83,6 +83,64 @@ print('\n\n')
 ```
 ### 运行结果：
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/test.png)
-    
-    
-    
+
+
+##   5.集合(set)与字典(dictionary)
+         集合是一个无重复元素的的特殊序列，基本功能是进行成员关系测试和删除重复元素。可以使用大括号 { } 或者 set() 函数创建集合，
+        注意：创建一个空集合必须用 set() 而不是 { }，因为 { } 是用来创建一个空字典。
+###创建方式：
+```python
+parame = {value01,value02,...}
+pa = set(value)  # 一般使用set函数是，传入一个字符串，讲每个字符作为集合的元素，去掉重复即可形成集合
+```
+###  集合的基本操作：
+```c
+#!/usr/bin/python3
+ 
+student = {'Tom', 'Jim', 'Mary', 'Tom', 'Jack', 'Rose'}
+ 
+print(student)   # 输出集合，重复的元素被自动去掉
+ 
+# 成员测试
+if('Rose' in student) :
+    print('Rose 在集合中')
+else :
+    print('Rose 不在集合中')
+ 
+ 
+# set可以进行集合运算
+a = set('abracadabra')
+b = set('alacazam')
+ 
+print(a)
+ 
+print(a - b)     # a和b的差集
+ 
+print(a | b)     # a和b的并集
+ 
+print(a & b)     # a和b的交集
+ 
+print(a ^ b)     # a和b中不同时存在的元素
+
+```
+       字典（dictionary）是Python中另一个非常有用的内置数据类型。列表是有序的对象结合，字典是无序的对象集合。
+    两者之间的区别在于：字典当中的元素是通过键来存取的，而不是通过偏移存取。
+    字典是一种映射类型，字典用"{ }"标识，它是一个无序的键(key) : 值(value)对集合。
+    键(key)必须使用不可变类型。
+    在同一个字典中，键(key)必须是唯一的。
+
+### 字典的创建方式
+```c
+dict = {}  # 创建空字典
+dict['one'] = "The choosen"  # 向字典中添加一个元素
+dict[2]     = "Guy"  # 现在字典中包含两个元素
+ 
+tinydict = {'name': 'runoob','code':1, 'site': 'www.runoob.com‘}  # 直接创建，key 与 value 之间用冒号隔开
+
+dict1 = dict([('Runoob', 1), ('Google', 2), ('Taobao', 3)])  # 利用dict函数创建
+```
+
+
+
+
+
