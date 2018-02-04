@@ -37,7 +37,7 @@
 ##   3.基本数据结构
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/pyData.png)
 ##   4.序列对象  string list tuple
-``` java
+``` c
 #!/usr/bin/python3
 # -*-coding:utf-8-*-
 """
@@ -80,7 +80,7 @@ print('Append 655:', list1.append(655), list1)
 
 print('\n\n')
 
-    ```
+```
     
     
     
