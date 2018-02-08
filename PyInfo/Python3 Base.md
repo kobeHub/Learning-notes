@@ -1,14 +1,16 @@
 # 一.在linux下python3 源码的执行：
-    1.直接运行python3 file 
-    2.在代码前添加解释器路径 #！/usr/bin/python3     再修改文件的执行权限  chomd +x file.py  可以直接运行PYHTON源码
-      故可以在代码中添加该行，使用方式1 时该语句相当于注释
-   
-   
+>  ```
+>1.直接运行python3 file 
+>2.在代码前添加解释器路径 #！/usr/bin/python3     再修改文件的执行权限  chomd +x file.py  可  以直接运行PYHTON源码
+>			可以在代码中添加该行，使用方式1 时该语句相当于注释
+>  ```
+
+
 # 二.基础语法 
  ## 1.编码
       python3 默认以UTF-8为编码方式存储字符串，所有字符串都是Unicode字符串，也可指定编码方式
       # -*- coding: cp-1252 -*-
-   
+       
       对于python2.x：
       # -*- coding:utf-8 -*-
        su = "人生苦短" #su是一个utf-8格式的字节串
@@ -16,7 +18,7 @@
        sg = u.encode("gbk") # u被编码为gbk格式的字节串，赋给sg
        print sg
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/1.png)
- 
+
      Note: 
      1)制定编码方式为utf-8  存储的是字节码 需要解码(decode)为unicode对象<class 'unicode'>，再进行编码为其他格式此时类型为<class 'str'>
      2)不能直接输出decode结果：u = s.decode("utf-8"); print u; 要encode后输出。
@@ -28,16 +30,16 @@
       1)单行注释以#，多行注释可以使用三引号'''  '''  或   """    """
       2)python最具特色的就是使用缩进来表示代码块，不需要使用大括号 {} 。
       3)缩进的空格数是可变的，但是同一个代码块的语句必须包含相同的缩进空格数。
-	  4)一个语句可以写多行   以反斜杠链接
-		total = item1+\
-		       item2+\
-		       item3
+      4)一个语句可以写多行   以反斜杠链接
+    	total = item1+\
+    	       item2+\
+    	       item3
           在[] {} () 中的多行语句不需要反斜杠
-     
+
 ##   3.基本数据结构
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/pyData.png)
 ## 4.序列对象  string list tuple
-``` c
+``` python
 #!/usr/bin/python3
 # -*-coding:utf-8-*-
 """
@@ -81,37 +83,41 @@ print('Append 655:', list1.append(655), list1)
 print('\n\n')
 
 ```
-        
+
 ### 运行结果：
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/test.png)
 
 ---
 ### 补充说明：
-    1.如果一个函数要返回多个值时，要以元组形式返回
-    例如：
-    	del example(a, b)
-	    return (a, b)
+```   
+1.如果一个函数要返回多个值时，要以元组形式返回
+   例如：
+    del example(a, b)
+    	      return (a, b)
 	type(example(a, b))
 	<class, 'tuple'>
-    2.python中的函数还可以接收可变长参数，比如以 "*" 开头的的参数名，会将所有的参数收集到一个元组上。
-    例如：
-        def test(*args):
-    	    print(args)
-            return args
+2.python中的函数还可以接收可变长参数，比如以 "*" 开头的的参数名，会将所有的参数收集到一个元组上。
+	例如：
+	    def test(*args):
+		    print(args)
+	        return args
 
-        print(type(test(1,2,3,4)))    #可以看见其函数的返回值是一个元组
+	    print(type(test(1,2,3,4)))    #可以看见其函数的返回值是一个元组
+```
     3.字典的输出
-    	+ 可以通过遍历字典中所有元素的键值输出字典
-	 def example(dict)
-	     for c in dict
-	         print(c)  # 输出的是所有键值以及值的元组形式
-        { 可以这样遍历所有元素:
-	     print(c, ':', dict[c]) ~~  ## 字典中的单个元素是以二元元组存储的，故dict[c]报错}#{错误}
-	+ 使用 字典的内置items()函数
-	  for k,v in dict.items():
-	  	print(k, ':', v)
-	  k,v也可以写作序列组的形式，即写作列表[k, v]  元组(k, v)  但是不能写作集合的形式，因为集合中不允许有重复元素，而字典的键值和值可能相等
-	  
+```
+可以通过遍历字典中所有元素的键值输出字典
+def example(dict)
+ 	for c in dict
+         print(c)  # 输出的是所有键值以及值的元组形式
+不可以这样遍历所有元素:
+     {print(c, ':', dict[c]) ~~  ## 字典中的单个元素是以二元元组存储的，故dict[c]报错}#{错误}
+
+使用 字典的内置items()函数
+for k,v in dict.items():
+	print(k, ':', v)
+  k,v也可以写作序列组的形式，即写作列表[k, v]  元组(k, v)  但是不能写作集合的形式，因为集合中不允许有重复元素，而字典的键值和值可能相等
+```
 ---
 
 
@@ -124,32 +130,32 @@ parame = {value01,value02,...}
 pa = set(value)  # 一般使用set函数是，传入一个字符串，讲每个字符作为集合的元素，去掉重复即可形成集合
 ```
 ###  集合的基本操作：
-```c
+```python
 #!/usr/bin/python3
- 
+
 student = {'Tom', 'Jim', 'Mary', 'Tom', 'Jack', 'Rose'}
- 
+
 print(student)   # 输出集合，重复的元素被自动去掉
- 
+
 # 成员测试
 if('Rose' in student) :
     print('Rose 在集合中')
 else :
     print('Rose 不在集合中')
  
- 
+
 # set可以进行集合运算
 a = set('abracadabra')
 b = set('alacazam')
- 
+
 print(a)
- 
+
 print(a - b)     # a和b的差集
- 
+
 print(a | b)     # a和b的并集
- 
+
 print(a & b)     # a和b的交集
- 
+
 print(a ^ b)     # a和b中不同时存在的元素
 
 ```
@@ -160,11 +166,11 @@ print(a ^ b)     # a和b中不同时存在的元素
     在同一个字典中，键(key)必须是唯一的。
 
 ### 字典的创建方式
-```c
+```python
 dict = {}  # 创建空字典
 dict['one'] = "The choosen"  # 向字典中添加一个元素
 dict[2]     = "Guy"  # 现在字典中包含两个元素
- 
+
 tinydict = {'name': 'runoob','code':1, 'site': 'www.runoob.com‘}  # 直接创建，key 与 value 之间用冒号隔开
 
 dict1 = dict([('Runoob', 1), ('Google', 2), ('Taobao', 3)])  # 利用dict函数创建
@@ -173,18 +179,17 @@ dict1 = dict([('Runoob', 1), ('Google', 2), ('Taobao', 3)])  # 利用dict函数�
 字典是二元有序序列(sequence)的无序不重复序列：具有以下形式
 >>> dict_1 = dict([('a',1),('b',2),('c',3)]) #元素为元组的列表
 >>> dict_1
-{'a': 1, 'b': 2, 'c': 3}
+   ': 1, 'b': 2, 'c': 3}
 >>> dict_2 = dict({('a',1),('b',2),('c',3)})#元素为元组的集合
 >>> dict_2
-{'b': 2, 'c': 3, 'a': 1}
+   ': 2, 'c': 3, 'a': 1}
 >>> dict_3 = dict([['a',1],['b',2],['c',3]])#元素为列表的列表
 >>> dict_3
-{'a': 1, 'b': 2, 'c': 3}
+   ': 1, 'b': 2, 'c': 3}
 >>> dict_4 = dict((('a',1),('b',2),('c',3)))#元素为元组的元组
->>> dict_4
-{'a': 1, 'b': 2, 'c': 3}
+>>> dict_4   
+>>> {'a': 1, 'b': 2, 'c': 3}
 
-”“”
 ```
 
 
@@ -221,26 +226,26 @@ dict1 = dict([('Runoob', 1), ('Google', 2), ('Taobao', 3)])  # 利用dict函数�
 a = 21
 b = 10
 c = 0
- 
+
 c = a + b
 print ("1 - c 的值为：", c)
- 
+
 c += a
 print ("2 - c 的值为：", c)
- 
+
 c *= a
 print ("3 - c 的值为：", c)
- 
+
 c /= a 
 print ("4 - c 的值为：", c)
- 
+
 c = 2
 c %= a
 print ("5 - c 的值为：", c)
- 
+
 c **= a
 print ("6 - c 的值为：", c)
- 
+
 c //= a
 print ("7 - c 的值为：", c)
 ```
@@ -327,19 +332,11 @@ not is：---
 
 is与==的区别：
 	is用于判断是否是同一对象的不同引用，而==用于比较对象的值是否相等
-	
+
 python具有intern机制在交互式环境中，会有一个小整数池对象，将[-5,256]这些整数对象，提前分配好空间，所有位于这个范围的引用公用一个对象，所以会出现：
 	a = 7; b = 7
 	(a is b) == True
 
 ```
-
-
-
-
-
-
-
-
 
 
