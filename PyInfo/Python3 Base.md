@@ -17,6 +17,7 @@
        u  = s.decode("utf-8") #  s被解码为unicode对象，赋给u
        sg = u.encode("gbk") # u被编码为gbk格式的字节串，赋给sg
        print sg
+
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/1.png)
 
      Note: 
@@ -38,6 +39,7 @@
 
 ##   3.基本数据结构
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/pyData.png)
+
 ## 4.序列对象  string list tuple
 ``` python
 #!/usr/bin/python3
@@ -86,6 +88,7 @@ print('\n\n')
 
 ### 运行结果：
 ![image](https://github.com/kobeHub/Hello-world/blob/master/pic/test.png)
+
 
 ---
 ### 补充说明：
