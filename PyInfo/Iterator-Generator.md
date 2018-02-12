@@ -7,7 +7,7 @@ Python数据结构中常用的概念：
 容器(container)、可迭代对象(iterable)、迭代器(itertor)、生成器(generator)的关系及概念如下
 ```
 
-[image](https://github.com/kobeHub/Hello-world/blob/master/pic/relationships.png)
+![image](https://github.com/kobeHub/Hello-world/blob/master/pic/relationships.png)
 
 
 # 二、详细描述
@@ -67,7 +67,7 @@ for ele in x:
 
 **实际执行情况：**
 
-[image](https://github.com/kobeHub/Hello-world/blob/master/pic/iterable-vs-iterator.png)
+![image](https://github.com/kobeHub/Hello-world/blob/master/pic/iterable-vs-iterator.png)
 
 
 ## 3.迭代器
