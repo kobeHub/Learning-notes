@@ -9,6 +9,7 @@ Python数据结构中常用的概念：
 
 [image](https://github.com/kobeHub/Hello-world/blob/master/pic/relationships.png)
 
+
 # 二、详细描述
 
 ## 1.容器 container
@@ -67,6 +68,7 @@ for ele in x:
 **实际执行情况：**
 
 [image](https://github.com/kobeHub/Hello-world/blob/master/pic/iterable-vs-iterator.png)
+
 
 ## 3.迭代器
 
