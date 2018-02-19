@@ -76,7 +76,7 @@ join函数将字符串作为分隔符插入到另一个字符串中
 
 ## str分割为序列
 
-`split(sep)` 分割符是必须参数，以sep分割，返回一个列表
+`split(str='', num=string.count(str))` 分割符是必须参数，以sep分割，返回一个列表
 
 `partition(mid)`: 转化为一个三元组，必须参数为中间元素
 
@@ -91,6 +91,17 @@ join函数将字符串作为分隔符插入到另一个字符串中
 ('cd', 'scs', 'dc')
 >>> 'cdscsdc'.rpartition('sc')
 ('cd', 'sc', 'sdc')
+
+split() 可以指定分割次数
+>>> str.split(' ', 1)
+['I', 'am very glad \nto view\n it']
+>>> str.split('\n', 1)
+['I am very glad ', 'to view\n it']
+>>> str.split('\n', )
+['I am very glad ', 'to view', ' it']
+>>> df = 'dvsd;dvsdvsd\'vdvds\r'
+>>> re.split(',|;|\'|\r', df)
+['dvsd', 'dvsdvsd', 'vdvds', '']
 ```
 
 ## 子串替换
