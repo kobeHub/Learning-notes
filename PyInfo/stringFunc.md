@@ -100,6 +100,7 @@ split() 可以指定分割次数
 >>> str.split('\n', )
 ['I am very glad ', 'to view', ' it']
 >>> df = 'dvsd;dvsdvsd\'vdvds\r'
+引入re 模块，可以使用多个分隔符
 >>> re.split(',|;|\'|\r', df)
 ['dvsd', 'dvsdvsd', 'vdvds', '']
 ```
