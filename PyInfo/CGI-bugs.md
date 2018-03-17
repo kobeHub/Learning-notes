@@ -38,7 +38,7 @@ ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load
 
  `sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())`
 
- `sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach())`
+ `sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer`
 
 ### :battery:　改变ＣＧＩ程序目录
 

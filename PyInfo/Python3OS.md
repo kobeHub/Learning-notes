@@ -128,7 +128,7 @@ os.fstat(fd).st_uid		os.stat(path).st_uid  		查看文件拥有者用户id，st_
 
 os.stat() 方法用于在给定的路径上执行一个系统 stat 的调用。
 
-**stat()**方法语法格式如下：
+`stat() ` 方法语法格式如下：
 
 ```python
 os.stat(path)
