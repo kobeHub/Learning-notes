@@ -520,3 +520,48 @@ leading dots.  Returns "(root, ext)"; ext may be empty.
 
 ```
 
+# python3 命令行操作
+
+## 1.  `os.system(command)`
+
+最为直接的调用可以直接进行命令行操作
+
+## 2.  `subprocess()`模块
+
+```python
+import subprocess
+subprocess.call("ll", shell=True)
+subprocess.call(['ls', '-l'], shell=True)
+subprocess.call(['ls', '-l'], shell=0)
+```
+
+直接调用命令，返回值即为系统返回，`shell=True`  表示直接在系统ｓｈｅｌｌ中运行Python文档中出于安全考虑，不建议使用shell=True。建议使用Python库来代替shell命令，或使用pipe的一些功能做一些转义。官方的出发点是好的，不过真心麻烦了很多， so....
+
+如果你更关注命令的终端输出，可以这样
+
+> \>>>subprocess.check_output(["echo", "Hello World!"])
+
+> 'Hello World!\n'
+>
+> \>>> subprocess.check_output("exit 1", shell=True)
+> Traceback (most recent call last):
+>   ...
+> subprocess.CalledProcessError: Command 'exit 1' returned non-zero exit status 1
+
+**可用方法：**
+
+```python
+ Older API
+    =========
+    call(...): Runs a command, waits for it to complete, then returns
+        the return code.
+    check_call(...): Same as call() but raises CalledProcessError()
+        if return code is not 0
+    check_output(...): Same as check_call() but returns the contents of
+        stdout instead of a return code
+    getoutput(...): Runs a command in the shell, waits for it to complete,
+        then returns the output
+    getstatusoutput(...): Runs a command in the shell, waits for it to complete,
+        then returns a (exitcode, output) tuple
+```
+
