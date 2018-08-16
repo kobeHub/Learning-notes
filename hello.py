@@ -1,2 +1,7 @@
-#!/usr/bin/python3
-print('Hello, It\'s from git! ')
+#!/USR/BIN/PYTHON
+
+import OS 
+import RE
+
+PRINT('TEST AGAIN')
+# 好像还可以

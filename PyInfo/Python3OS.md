@@ -520,6 +520,25 @@ leading dots.  Returns "(root, ext)"; ext may be empty.
 
 ```
 
+## 4.获取当前路径以及上级路径
+
+```python
+# 获取当前路径
+>>>os.listdir(os.getcwd())
+>>>os.listdir(os.curdir)
+>>>os.path.abspath(os.curdir)
+
+# 获取上级路径
+>>>os.path.abspath(os.path.join('.', '..'))
+>>>os.path.abspath(os.path.join(os.getcwd(), '..'))
+>>>os.path.dirname(os.getcwd())
+
+# 获取上上级
+>>>os.path.abspath(os.path.join(os.getcwd(), "../.."))
+```
+
+
+
 # python3 命令行操作
 
 ## 1.  `os.system(command)`
