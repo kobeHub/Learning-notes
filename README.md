@@ -1,5 +1,5 @@
 # KEEP LEARNING
-The basic repository of my learning notes. It's noting but something I care.
+The basic repository of my learning notes. It's nothing but something I care.
 
 
 
