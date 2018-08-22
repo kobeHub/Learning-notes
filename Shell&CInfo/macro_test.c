@@ -32,7 +32,7 @@
 //upcase
 #define UPCASE(c) (((c)>='a' && (c)<='z') ? ((c)-0x20):(c))
 
-
+#define MIN(A, B) ({__typeof__(A) __a = (A); __typeof__(B) __b = (B); __a<__b?__a:__b;})
 
 
 //#if VERSION == 1.11
@@ -69,4 +69,11 @@ int main(){
     LOG_V3("It is a good use of v%d", 3);
     char ab = UPCASE('a');
     printf("after upcase:%c\n", ab);
+
+    LOG_V3("Let\'s use the mots powerful MIN macro:");
+    LOG_V3("MIN(4, 2*3): %d", MIN(4, 2*3));
+    float f1= 1.0f;
+    float f2 = MIN(f1++, 1.5f);
+    LOG_V3("MIN(1.0f++, 1.5f):%f",f2);
+
 }
