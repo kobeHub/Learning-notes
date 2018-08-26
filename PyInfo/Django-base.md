@@ -284,8 +284,269 @@ True
 ```
 python3 manage.py createsuperuser
 Username:xx
+I
+```
 
+## 5.添加更多views
+
+可以在已经创建的app中加入更多的views `polls/views.py` 文件中添加相应的函数实现,然后在新创建的`poll/urls.py` 中添加
+
+```python
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    # ex: /polls/
+    path('', views.index, name='index'),
+    # ex: /polls/5/  通过该url将question_id 传递给views.py中的detail
+    path('<int:question_id>/', views.detail, name='detail'),
+    # ex: /polls/5/results/
+    path('<int:question_id>/results/', views.results, name='results'),
+    # ex: /polls/5/vote/
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+
+当请求获取`pllos/22` django会加载根项目的urls.py 由于在里面的`urlpatterns=[path('polls/', include(polls.urls))]` 将app `polls`中的urls记载到里面,回进入`polls/url.py` 中查找,就可以找到`detail` view 
+
+## 6.创建模板
+
+为了避免对视图进行硬编码,可以使用模板进行定义,在polls文件夹下创建templates文件夹,django会自动在该文件夹寻找模板.Django项目关于模板的设置在默认`setting.py` 文件中,描述了项目如何记载呈送模板.定义了默认的`template backend ` 将`APP_DIRS=True` ,会在每个`INSTALLED_APP`中的子文件夹寻找templates文件夹作为模板文件夹
+
+> 所以在polls app中的模板要放在 `poll/templates/polls/` 文件夹中
+
+```html
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="/polls/{{ question.id }}/">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+```
+
+> + 所有的判断和循环语句都需要使用{%%}进行嵌套
+> + 用{% ***** %} 表示条件结束
+> + 输出变量值时需要用{{ var }}
+> + 其他语法根据html
+
+### 添加到view
+
+```python
+from django.http import HttpResponse
+from django.template import loader
+from django.http import Http404
+
+from .models import Question
+
+
+def index(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    template = loader.get_template('polls/index.html')
+    context = {
+        'latest_question_list': latest_question_list,
+    }
+    return HttpResponse(template.render(context, request))
+
+def detail(request, question_id):
+    try:
+        question = Question.objects.get(pk=question_id)
+    except Question.DoesNotExist:
+        raise Http404("Question does not exist")
+    return render(request, 'polls/detail.html', {'question': question})
+
+def detail(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/detail.html', {'question': question})
+```
+
+> 获取模板的方式:
+>
+> + 使用loader加载模板,然后使用模板调用render函数,将所需要的参数以dict形式传递
+> + 使用`shortcut.render ` 接受三个参数,httprequest  templates cointext,返回一个根据给定模板和内容的`HttpResponse` 对象
+>
+> 获取404:
+>
+> + 可以使用抛出异常的方式得到404
+> + 使用shortcut.get_object_or_404(), 给定对象model 以及选择条件
+
+### Templates urlspolls
+
++ 当使用一个连接以`<a href="/polls/{{question.id}/">...</a>` 的形式出现在模板中时,采用的是硬编码的形式,当项目中的url变化时,需要进行大量的更改,不符合复用原则,可以使用在polls/url.py中定义的 url     `{% url %}` ,如果需要更改url时只需要在urls.py中修改,不需要改动templates
+
++ **命名域的url:**
+
+  当一个项目有很多app时,可能出现重名状况,所以需要在url前添加命名域,这时需要在`polls/urls.py`中添加 `app_name='polls' ` 既可以在url中指定命名域
+
+  ```html
+  <li><a href="{% url 'detail' question.id %}">{{ question.question_text }}</a></li>
+  
+  <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+  ```
+
+  
+
+  
+
+## 7.使用生成视图,减少代码量
+
+**detail() result()** 视图较为简单,直接提供一个数据,index也只提供一个列表.这些视图展示了web开发的一个基本样例:根据url参数从数据库获取数据并显示,加载一个模板,并且返回一个`rendered` template  ,django提供了一个便捷的方式去使用views ------`generic`  
+
++ 修改URL conf
++ 更改views
+
+主要使用了`generic.ListView` `generic.DetailView` ,以这两个类作为基类,需要注意的是`DetaliView` 需要从url获取的主码是`pk` 所以需要将其进行更改
+
+```python
+from django.urls import path
+
+from . import views
+
+app_name = 'polls'
+urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
+    path('<int:pk>/', views.DetailView.as_view(), name='detail'),
+    path('<int:pk>/results/', views.ResultsView.as_view(), name='results'),
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+
+对于views进行更改时,这两个类需要提供一个`model` 参数指明所使用的数据模型, `template_name` 参数指明模板
+
+```python
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views import generic
+
+from .models import Choice, Question
+
+
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Question.objects.order_by('-pub_date')[:5]
+
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
+
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
+
+
+def vote(request, question_id):
+    ... # same as above, no changes needed.
+```
+
+**Attention:**
+
+之前的模板中使用`lasted_question_list` 作为参数列表,对于DetailView,再使用Question model 时会自动生成内容变量*question_list* ,所以必须对该参数进行改写
+
+## 8. 使用静态文件
+
+通常使用的静态文件包括 images, js, css `django.contrib.staticfiles` 收集每个app的静态文件到特定文件夹,该app包含在`INSTALLED_APPS`中.django的`STATICFILES_FINDERS` 设置了寻找静态文件的方式默认是
+
+```python
+[
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+```
+
+首选项是在`STATICFILES_DIR` ,可以在项目的setting.py中设置`STATICFILES_DIRS=[os.path.join(BASE_DIR, 'static/')]` ;如果没有该设置,使用第二个默认选项,会在每个app的一个
+子文件夹static中寻找静态文件,而最常用的文件结构是在static文件夹下再建立`app/` 放置静态文件
+
+可以使用样式表(polls/static/polls/style.css)
+
+```css
+ul {
+    color green;
+}
+body {
+    backgoround : black url('images/background.jpg') no-repeat;
+}
+```
+
+然后在模板中引入css:
+
+```html
+{%load static%}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+<!--该标签产生静态文件的绝对路径-->
 ```
 
 
+
+## 9.定制管理员站点 admin
+
+:electric_plug: **关于模板文件组织:**
+
+和static files类似,所有的模板可以放在同一个文件夹中,但是分属于不同app的模板和静态文件要放在每个子文件夹中,可以在醒目的根目录下创建`templates/admin` 来放置admin站点的模板文件,需要在setting文件中设置
+
+```python
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+可以修改base_site.html模板,更改站点header,对于admin中的详细内容需要在`polls/admin.py` 中进行修改
+
+```python
+from django.contrib import admin
+from .models import Question, Choice
+
+
+class ChoiceInline(admin.TabularInline):
+    """
+    作为Question的内连对象,可以继承自admin.StackedInline 但是相对与需要较大的页面空间
+    使用这种方式所需的页面空间较小
+    """
+    model = Choice
+    extra = 3
+
+
+
+class QuestionAdmin(admin.ModelAdmin):
+    # 指明父类参数, fields 列表形式, fieldsets 每个元素代表一个模块,模块内是标题,内容
+    fieldsets = [
+        (None, {'fields':['question_text']}),
+        ('Date information', {'fields':['pub_date']}),
+    ]
+    inlines = [ChoiceInline]
+
+    #在全部问题页面的列表设置,包含了三个纵列
+    list_display = ('question_text', 'pub_date', 'published_recently')
+    # 按日期筛选
+    list_filter = ['pub_date']
+    # 添加搜索框
+    search_fields = ['question_text']
+
+
+
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Choice)
+
+```
 
