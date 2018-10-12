@@ -14,7 +14,7 @@ typedef struct{
 #endif
 
 //定义debug输出接口
-extern void DEBUG(char* format, ...);
-extern point_index local_point;
-extern point_index vector(point_index a, point_index b);
+void DEBUG(char* format, ...);
+point_index local_point;
+point_index vector(point_index a, point_index b);
 #endif

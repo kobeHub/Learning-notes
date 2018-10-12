@@ -1,7 +1,7 @@
 #include "vector.h"
 
 int max(int, int);
-
+extern void print(char *, point_index);
 point_index a = {1, 2, 3};
 point_index b = {5, 7 , 9};
 
