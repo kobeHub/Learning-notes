@@ -310,7 +310,7 @@ eval('return;'); // 不可以单独使用
 注意eval函数没有自己的作用域,都在当前作用域执行,因此可能会修改当前已有变量值,造成安全问题,但是在使用严格模式时,其内部声明的作用域不会影响到外部.但是仍然可以更改外部变量的值
 
 ```javascript
-> "use strict";
+ > "use strict";
 'use strict'
 > eval('let a = 12;')
 undefined
@@ -326,4 +326,130 @@ ReferenceError: a is not defined
 
 ## 2. Array 数组
 
-类似于python中的列表类型,数组可以存储任意数据类型 ,其类型是Object,是一种特殊类型的,只是每个属性的键值是数字而且是自增的
+类似于python中的列表类型,数组可以存储任意数据类型 ,其类型是Object,是一种特殊类型的,只是每个属性的键值是数字而且是自增的 ,可以先定义后赋值，也可以在定义时赋值。可以使用`Object.keys()` 函数得到一个数组对象的键值，即为每个元素的下标
+
+进行数组元素读取时可以采用对象的读取方式，但是不可以对数字型键值使用点操作符，只可以使用方括号结构
+
+```javascript
+> let arr1 = [
+... {a: 1},
+... [1, 2, 3,],
+... () => {return true;}]
+undefined
+> arr1
+[ { a: 1 }, [ 1, 2, 3 ], [Function] ]
+> arr1[2]
+[Function]
+> arr1[2]()
+true
+> arr1[1]
+[ 1, 2, 3 ]
+> arr1[0]
+{ a: 1 }
+```
+
+### Array.length 属性
+
+返回数组元素数量，js使用一个32位整数，保存数组的元素个数，所以最大的存储数量为（2^32^ - 1） 只要是数组就有length属性，该值是一个动态值，等于最后一个元素的键值+1
+
+```javascript
+> arr1.length
+3
+> arr1.length = 2
+2
+> arr1
+[ { a: 1 }, [ 1, 2, 3 ] ]
+> arr1.length = 0
+0
+> arr1
+[]
+```
+
+可以使用`array.length = 0` 将数组清空，将数组length属性人为设置为小于当前元素数量的值，将会自动删除后面多雨的元素，将其设置为不合法的值会报错。
+
+### in 运算符
+
+`in` 运算符可以检查元素是否属于对象，也可以用来判断数组元素的存在情况，但是只能检查键值是否在数组中，可以用来检查某个位置是否为空位。注意length属性不过滤空位，使用delete语句删除数组元素时会将对应的位置设置为`empty item` 数组长度属性不会改变
+
+读取已经删除的元素时，返回值为`undefined` ,对于数组中的空位，使用`forEach` 方法，`for ... in ` 结构， `Object.keys()` 都会被过滤
+
+```javascript
+> delete bu[2]
+true
+> bu
+[ 1, 23, <1 empty item> ]
+> 2 in bu
+false
+> bu.length
+3
+> delete bu[0]
+true
+> bu
+[ <1 empty item>, 23, <1 empty item> ]
+> 0 in bu
+false
+> 1 in bu
+true
+> bu[0]
+undefined
+
+for (let a in bu) {
+    ...
+}
+```
+
+### 数组的遍历
+
+`for... in` 循环可以以遍历对象的方式遍历数组，也可以使用for循环，以及`forEach()` 方法
+
+```javascript
+var a = [1, 2, 3];
+a.foo = true;
+
+for (var key in a) {
+  console.log(key);
+}
+
+var colors = ['red', 'green', 'blue'];
+colors.forEach(function (color) {
+  console.log(color);
+});
+```
+
+### 类似数组的对象
+
+如果一个对象的所有键值都为正整数或者0，并且有`length ` 属性，可以将该对象称为类似数组的对象。但是该对象中没有数组的`push（） pop()` 等方法，而且length属性不是动态值，不会随着数组成员的变化而变化
+
+常见的类似数组的对象包括函数的`Arguments` 对象，以及大多数的dom元素
+
+```javascript
+// arguments对象
+function args() { return arguments; }
+var arrayLike = args('a', 'b');
+
+arrayLike[0] // 'a'
+arrayLike.length // 2
+arrayLike instanceof Array // false
+
+// DOM元素集
+var elts = document.getElementsByTagName('h3');
+elts.length // 3
+elts instanceof Array // false
+
+// 字符串
+'abc'[1] // 'b'
+'abc'.length // 3
+'abc' instanceof Array // false
+```
+
+可以使用`Array.prototype.slice.call(arrayLike)` 方法将类似数组的对象转化为数组；也可以通过`call（）` 函数将数组的方法放到对象的上面
+
+```javascript
+function print(value, index) {
+  console.log(index + ' : ' + value);
+}
+
+Array.prototype.forEach.call(arrayLike, print);
+// 对于string的类型也可以使用该方式得到进行类似操作,但是使用这种方式比直接使用原声的forEach要慢，所以需要将数组型对象转化为数组
+```
+
