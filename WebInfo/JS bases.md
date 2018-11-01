@@ -297,7 +297,7 @@ null>=0  null<=0 //true
 - 十六进制： `0x  0X` 前缀数字
 - 二进制： `0b   0B` 前缀数字
 
-## 6.Js in browser function
+## 6. Js in browser function
 
 ```javascript
 alert(...)   
@@ -545,5 +545,18 @@ welcome();
 function pow(x, n) {
   ...
 }
+```
+
+## 11. 对象参与运算
+
+通过定义`valueOf()`参数来确定对象参与操作符运算时的值
+
+```javascript
+let obj = {
+    valueOf: function () {
+        return 10;
+    }
+}
+ 
 ```
 
