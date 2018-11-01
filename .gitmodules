@@ -1,0 +1,3 @@
+[submodule "Shell&CInfo/ParallelTest"]
+	path = Shell&CInfo/ParallelTest
+	url = https://github.com/kobeHub/ParallelTest
