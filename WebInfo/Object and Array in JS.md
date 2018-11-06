@@ -453,3 +453,190 @@ Array.prototype.forEach.call(arrayLike, print);
 // 对于string的类型也可以使用该方式得到进行类似操作,但是使用这种方式比直接使用原声的forEach要慢，所以需要将数组型对象转化为数组
 ```
 
+### 数组方法
+
+####**添加删除元素:**
+
++ `arr.push(...items)`  将元素加入到最后,并且返回数组长度
+
++ `arr.pop()` 删除并返回最后一个元素
+
++ `arr.shift()` 删除并返回第一个元素
+
++ `arr.unshift(...items)` 将一个或者多个元素加入数组头部,返回数组长度
+
++ `arr.splice(index[, deleteCount, elm1, elm2, ..., elmN])` : 从下标index的元素开始,删除deleteCount个元素,并且将之后的参数加入到数组中,返回被删除的元素
+
+  此函数可以作为数组操作中的一种瑞士军刀方法,可以满足数组增删改的所有需求
+
+  ```javascript
+  // delete
+  arr.splice(1, 1)
+  arr.splice(0)   // 删除全部
+  arr.splice(1, 5)
+  
+  // insert
+  arr.splice(0, 0, ..items)  === arr.unshift(..items)
+  arr.splice(-1, 0, ..items)   //在倒数第二位插入元素
+  arr.splice(1, 3, ...items)   // 删除并且插入元素arr
+  
+  // edit
+  arr.splice(i, i, ..item)
+  ```
+
++ `arr.slice(start, end)` 
+
+  复制index位于[start, end)之间的所有元素为新的数组
+
++ `arr.concat(arg1, arg2)` 
+
+  连接两个数组或者数组和单个元素,返回一个新的数组,注意原数组无变化
+
+####**数组元素查找**
+
++ `arr.indexOf(item, from)` :从f索引为from的位置开始向右查找,返回第一个找到的索引
+
++ `arr.lastIndexOf(item, from)` 从右开始查找
+
++ `arr.includes(item, from)` 是否包含该元素 
+
+  需要注意的是index方法使用的是绝对等运算符`===`,所以如果进行NaN的查找时,由于NaN != NaN
+
+  所以会返回-1,可以使用includes方法
+
+  ```javascript
+  arr.indexOf(NaN)  // -1
+  arr.includes(NaN)  // true
+  ```
+
++ `find and findIndex` 
+
+  对于一个对象的数组,使用某些条件对与对象进行查找,可以使用find方法.该方法需要传入一个函数作为参数,返回第一个使得函数返回值为真的元素
+
+  ```javascript
+  let result = arr.find(function (item, index, array) {
+      // 如果找到符合条件的元素则返回true
+  });
+  // item 为待查找的元素
+  // index 为索引
+  // array 为原数组
+  ```
+
+  ```javascript
+  var array1 = [5, 12, 8, 130, 44];
+  
+  function findFirstLargeNumber(element) {
+    return element > 13;
+  }
+  
+  console.log(array1.findIndex(findFirstLargeNumber));
+  // expected output: 3
+  
+  
+  > arr
+  [ 'dsad', 44, 423, 'dsad', 'dsad', 'd', 'dsad' ]
+  > arr.find((item, index, array) => index == 4);
+  'dsad'
+  > arr.find((item, index) => index == 4);
+  'dsad'
+  > arr.find((item, index, array) => array[index] == 'd');
+  'd'
+  > arr.find((item, index, array) => array.length == 7);
+  'dsad'    // 恒为真则返回第一个值
+  ```
+
++ `filter`
+
+  `filter` 方法返回一个使得参数函数返回值为真的元素的数组
+
+  ```javascript
+  let results = arr.filter(function (item, index, array) {
+      
+  })
+  
+  
+  // [ 44, 423, 'dsad', 'dsad', 'd' ]
+  > arr.filter(item => !isNaN(item))
+  [ 44, 423 ]
+  > arr.filter((item, index, array) => array.length == 5);
+  [ 44, 423, 'dsad', 'dsad', 'd' ]
+  
+  ```
+
+#### **数组元素变换**  
+
++ `map`
+
+  可以使用map函数对于数组元素进行映射,通过传入一个函数作为参数,进行转化
+
+  ```javascript
+  let result = arr.map(function (item, index, array) {
+      
+  });
+  
+  var array1 = [1, 4, 9, 16];
+  // pass a function to map
+  const map1 = array1.map(x => x * 2);
+  console.log(map1);
+  // expected output: Array [2, 8, 18, 32]
+  ```
+
++ `sort(fn)` 
+
+  将数组中所有元素作为字符串类型进行排序,注意数字也会转化为字符串类型,对于数字进行排序时需要传入函数进行操作.
+
+  由于数组对象可以包含任意类型的数据,为了便于进行统一的排序操作,将所有类型都看作字符串类型进行操作,其内部实现是一个优化后的快排算法.将会遍历数组每一个元素,使用给定的函数对于数据进行重排.实际上给定的函数只要在`a > b` 时返回正值,反之返回负值即可
+
+  ```javascript
+  let arr = [ 1, 2, 15 ];
+  
+  arr.sort(function(a, b) { return a - b; });
+  
+  alert(arr);  // 1, 2, 15
+  ```
+
++ `reverse, split, join`
+
+  数组的反向,分割以及拼接
+
+  ```javascript
+  let names = 'Bilbo, Gandalf, Nazgul';
+  
+  let arr = names.split(', ');
+  
+  for (let name of arr) {
+    alert( `A message to ${name}.` ); // A message to Bilbo  (and other names)
+  }
+  let arr = 'Bilbo, Gandalf, Nazgul, Saruman'.split(', ', 2);
+  // Bilbo, Gandalf
+  
+  
+  > let str = 'vdsbs'
+  undefined
+  > str.split('')
+  [ 'v', 'd', 's', 'b', 's' ]
+  ```
+
++ `resuce/redueRight`
+
+  生成方式,根据传入的函数生成相应的值,并且每一个item在调用该函数时可以使用上一个itme调用的返回值,可以实现递归的操作
+
+  ```javascript
+  let value=  arr.reduce(function (previousValue, item, index, arr)) {
+                         
+                         }, initial);
+  ```
+
+  参数与find map filter类似,但是多了一个初始值,用于作为第一次调用的值
+
+  ```javascript
+  let arr = [1, 2, 3, 4, 5];
+  let result = arr.reduce((sum, current) => sum + current, 0);
+  // 15  求元素累加和
+  
+  ["Bilbo", "Gandalf", "Nazgul"].forEach((item, index, array) => {
+    alert(`${item} is at index ${index} in ${array}`);
+  });
+  ```
+
+  
