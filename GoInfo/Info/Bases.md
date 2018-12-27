@@ -104,14 +104,130 @@ func main() {
 
 **注意:使用()进行多个变量声明或者包引入时,每个item间可以用`;`隔开也可以不用,不可以用`,` ** 
 
+go为静态语言不可以将不同类型的数据赋值给不同类型的变量
+
 ### 3. 基本类型
 
 + bool
+
 + Numeric Types
   + int8, int16, int32, int64, int
   + uint8, uint16, uint32, uint64, uint
   + float32, float64
-  + complex64, complex128
+
+    complex64, complex128
   + byte
   + rune
+
 + string
+
+#### Signed integers
+
+| Type  | size                | range                   |
+| ----- | ------------------- | ----------------------- |
+| int8  | 8 bits              | -128-127                |
+| int16 | 16 bits             | -32768-32767            |
+| int32 | 32 bits             | -2147483648- 2147483647 |
+| int64 | 64 bits             |                         |
+| int   | depends on platform | 64 bits                 |
+
+可以使用`fmt.Printf` 中的格式化输出`%T`获取一个变量或者数据的类型，也可以使用`unsafe`包中的`Sizeof（）` 函数获得变量的大小(Bytes)
+
+```go
+package main
+
+import (
+  "fmt"
+  "unsafe"
+)
+
+func main() {
+  a, b := 'a', 12
+  c, d, e := 123, "Test", "go"
+
+  fmt.Println(a, b, c, d, e)
+  fmt.Println("Type test:")
+  fmt.Printf("a: %T, size: %d, b: %T, size: %d", a, unsafe.Sizeof(a), b, unsafe.Sizeof(b))
+
+}
+
+
+97 12 123 Test go
+Type test:
+a: int32, size: 4, b: int, size: 8%  
+```
+
+#### Unsigned int
+
+与有符号数类似
+
+#### Floating point types
+
+浮点数，包含32位以及64位的类型
+
+#### Complex types
+
++ complex64: 实部和虚部都是32为浮点数
++ complex128：实部和虚部都是64位浮点数
+
+可以使用内置函数初始化一个复数,传入的参数类型需要相同，得到的复数的类型根据传入的参数决定
+
+```go
+func complex(r, i FloatType) ComplexType
+```
+
+或者可以直接使用变量声明的方式：
+
+```go
+c := 1 + 2i
+```
+
+其他两种数据类型byte 对应于uint8, rune对应于int32,字符串类型必须使用`“”` 括起来，使用单引号对应于byte
+
+### 4. 类型转换
+
+go语言不支持不同类型的number的直接运算，需要进行显式的类型转换
+
+```go
+i := 2
+j := 2.2
+sum := i + int(j)   // 4
+
+var j float64 = float64(12)  // 必须加后面的强制类型转换
+```
+
+### 5.常量使用
+
+使用const关键字定义常量，注意常量的处理是在编译时进行的，不可以在运行时给常量赋值，类似于C中的`#define` 。所以不可以给一个常量赋值为一个函数的返回值
+
+在go语言中任意包含在双括号中的string，都是字符串常量，该常量没有类型`untyped` 
+
+```go
+const hello = "The string is untyped"
+```
+
+这似乎和之前的变量声明有所矛盾，如果"string" 没有类型，**对于`var a = "cds"`那又是如何根据常量“cds”向a进行类型传递呢？**
+
+这是因为无类型的常量有一个默认的类型与之关联，只有代码真正需要使用该默认类型时才会使用，
+
+对于以上声明操作，由于变量a需要一个类型所以使用了默认类型`string` 
+
+```go
+const typed string = "cdsvds"   // 声明有类型的常量
+
+func main() {  
+        var defaultName = "Sam" //allowed
+        type myString string
+        var customName myString = "Sam" //allowed
+        customName = defaultName //not allowed
+
+}
+```
+
+**Golang是强类型语言，所以以上代码会报错**。虽然`myString` 是`string` 的一个别名，但是强类型不允许不同类型的变量相互赋值，所以该操作不被允许
+
+与之相似bool常量操作与string常量相同，别名类型变量赋值仍会报错。
+
+**数字常量**
+
+数字常量包含所有int, float, complex.对于数字常量而言，也是没有类型的，所以同一个常量可以赋给各种类型的变量，并且根据需求进行相应的类型转换。对于单一的`const a = 5` 而言其默认类型是int, float64, complex128(根据平台判断)
