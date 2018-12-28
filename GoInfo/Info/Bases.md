@@ -231,3 +231,52 @@ func main() {
 **数字常量**
 
 数字常量包含所有int, float, complex.对于数字常量而言，也是没有类型的，所以同一个常量可以赋给各种类型的变量，并且根据需求进行相应的类型转换。对于单一的`const a = 5` 而言其默认类型是int, float64, complex128(根据平台判断)
+
+## 3. 函数
+
+golang 函数的基本语法如下：
+
+```go
+func functionname(param type) returnType {
+    
+}
+
+func rectProg(length, width float64)（float64, float64）{
+    var area = length * width
+    var perimeter = (length + width) * 2
+    return area, perimeter
+}
+```
+
+其中参数可以具有多个参数，不同类型，如果所有参数都是同一类型，只需要在最后一个参数后添加类型即可。对于多返回值的函数，可以使用括号将返回值类型包含其中。
+
+golang需要指定返回值的类型，也可以指定返回值的名称，此时`return` 语句就不用显式指明返回值的名称
+
+```go
+resfunc rectProps(length, width float64) (area, per, float64) {
+    area = length * width
+    per = (length + width) / 2
+    return
+}
+```
+
+**空白操作符：**
+
+对于多个返回值，如果不需要使用其中的某些返回值，可以使用`_` 空白操作符进行变量指示，注意空白符与动态语言中用法不同，不可以使用其值,同时一个赋值语句中可以使用多个`_` 代表多个不使用的空位值，注意go中对于声明但是没有使用的变量会报错，而对于空白操作符不可以使用其值。`__` 不是空白操作符
+
+```go
+func rectTest(length, width float64) (area, per, div float64) {
+  area = length * width
+  per = (length + width) / 2
+  div = math.Sqrt(length*length + width*width)
+  return
+}
+
+fmt.Println("\nTest for func:")
+area, _, __ := rectTest(3, 4)
+fmt.Println("Area:", area, "div:", __, )
+// Test for func:
+//Area: 12 div: 5
+
+```
+
