@@ -280,3 +280,105 @@ fmt.Println("Area:", area, "div:", __, )
 
 ```
 
+##4. Go的分号插入
+
+go默认采用`；`作为每条语句的结束标志，可以省去分号，按照一定的代码规则，go在编译时会自动插入分号
+
++ 当源码被分为多行的标记时，go会在一行的末尾添加分号，如果最后的标记是
+
+  > 标识符（程序中的元素，变量，类型）
+  >
+  > integer, floating-point, imaginary, string 
+  >
+  > break, continue, fallthrough, return关键字之一
+  >
+  > 操作符： ++ ，--，）， ]， }
+
++ 为了进行跨越多行的复杂声明，可以使用()
+
+所以对于go中的条件控制语句, else 或者if else必须写在}的同一行，否则会被默认加上分号，导致编译错误。所以在go中一个条件控制被作为一个单独的语句，对于{}， （）， []中的内容都被作为单独的语句
+
+```go
+if condition {
+    
+} else {}
+```
+
+## 5. Go中的控制流
+
+go使用基本的`if..else`, `if .. else if`进行流控制，使用`for` 同时进行静态语言中循环遍历，也可以作为`while` 使用，同时可以进行类似动态语言的数组遍历操作
+
+```go
+var list []int = []int{1321, 435, 453}
+for i, v := range list {
+    fmt.Printf("list[%d] = %d", i, v)
+}
+
+  for i, no := 10, 1; i <= 20 && no <= 10; i, no = i + 1, no + 1 {
+    fmt.Printf("%d * %d = %d\n", i, no, i * no)
+  }
+
+  // Use for as while, all the ; can bo omitted
+  i := 2
+  for i < 10 {
+    fmt.Printf("The %d out\n", i)    // Format output is only for Printf
+    i += 2
+  }
+```
+
+**Switch 使用：**
+
+在go中`switch`用法与c/c++不同，默认是每一个`case` 后都跟一个break, 如果需要多个case都可以执行，可以使用`fallthrough` 关键字，使之在第一个满足条件的case与`fallthrough` 关键字最后连接的一个case上的代码都可以执行.`fallthrough` 关键字只允许作为一个case的最后的语句，case的表达式可以不是常量，可以在运行时赋予其值
+
+```go
+switch finger := 2; finger {//finger is declared in switch
+    case 1:
+        fmt.Println("Thumb")
+	fallthrough
+    case 2:
+        fmt.Println("Index")
+        fallthrough
+    case 3:
+        fmt.Println("Middle")
+        fallthrough
+    case 4:
+        fmt.Println("Ring")
+        fallthrough
+    case 5:
+        fmt.Println("Pinky")
+        fallthrough
+    default: //default case
+        fmt.Println("incorrect finger number")
+    }
+// output
+Index
+Middle
+Ring
+Pinky
+incorrect finger number
+```
+
+同时，在switch语句前可以允许执行一个语句，使用分号分开，但是该语句中变量的作用域仅限于该switch scope
+
+除此之外，switch可以不加条件，此时可以作为if逻辑语句使用
+
+```go
+num := 75
+  switch { // expression is omitted
+  case num >= 0 && num <= 50:
+    fmt.Println("num is greater than 0 and less than 50")
+  case num >= 51 && num <= 100:
+    fmt.Println("num is greater than 51 and less than 100")
+  case num >= 101:
+    fmt.Println("num is greater than 100")
+  }
+
+letter := "i"
+    switch letter {
+    case "a", "e", "i", "o", "u": //multiple expressions in case
+        fmt.Println("vowel")
+    default:
+        fmt.Println("not a vowel")
+    }
+```
+
