@@ -280,6 +280,38 @@ fmt.Println("Area:", area, "div:", __, )
 
 ```
 
+#### 可变参数列表的函数
+
+golang中支持使用可变参数列表，可以再参数列表的最后一项使用变长参数，`args ...T` ,最常见的可变参数列表的函数是`append()`函数用于进行slice对象的扩展，第二个参数可以接受一个相当于Slice的多个数值
+
+注意使用Slice或者数组作为可变参数传入时，可以使用语法糖`slice...` ,对于可变参数而言，期待是一个类型为的slice。使用该语法糖后，将切片或者数组中的元素全部迭代。但是需要注意使用slice作为参数的情况下，虽然go是按值传递，但是由于切片的头指针是一个指向目标数组的首指针，所以在函数内部改变切片内容，也会映射到函数外部xcat
+
+```go
+func change(s ...string) {  
+    s[0] = "Go"
+}
+
+func main() {  
+    welcome := []string{"hello", "world"}
+    change(welcome...)
+    fmt.Println(welcome)
+}
+// Go world
+
+
+func change_(s ...string) {
+  s[0] = "Rust"
+  c := make([]string, cap(s)*2)
+  copy(c, s)
+  c[2] = "test"
+  s = c
+  fmt.Println(s)
+}
+// [Rust world test ] [Rust world]  注意使用slice时使用nake进行切片扩展时，只有在0-len-1之间的ｉｎｄｅｘ可以赋值
+```
+
+
+
 ##4. Go的分号插入
 
 go默认采用`；`作为每条语句的结束标志，可以省去分号，按照一定的代码规则，go在编译时会自动插入分号
