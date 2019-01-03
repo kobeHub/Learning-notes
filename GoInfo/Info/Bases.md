@@ -159,7 +159,7 @@ a: int32, size: 4, b: int, size: 8%
 
 #### Unsigned int
 
-与有符号数类似
+与有符号数类似   byte类型是uint8的一个别名，rune是int32的一个别名，所以使用byte表示string时只有8位可用，所以只可以表示基本的ASCII码，而unicode需要使用2个字节进行表示，所以需要使用rune，utf-8一般使用三个字节表示
 
 #### Floating point types
 
