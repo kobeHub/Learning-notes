@@ -22,7 +22,14 @@ func pointer_test() {
   fmt.Println("a++:", *b, a)
 }
 
+func change_value(ptr *int) {
+  *ptr = 123
+}
+
 func main() {
   pointer_test()
+  var test = 12
+  change_value(&test)
+  fmt.Println("12 after change:", test)
 }
 
