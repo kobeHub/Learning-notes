@@ -202,3 +202,204 @@ func findType(i interface{}) {
 ```
 
 但是注意需要获取一个空接口变量真实类型的值后才可以调用该类型的方法。所以在`switch`后通常需要进行赋值操作
+
+## 3. 接口实现时的不同接收器
+
+对于一个特定的类型，实现一个接口需要实现接口提供的所有方法，由于method可以使用值或者指针两种接收器。所以在使用接口变量调用方法时，因为接收器类型的不同会存在一定的差异。但是对于类型变量调用该方法时不存在接收器的差异。
+
+**在使用接口变量时：**
+
++ 如果接收器是值`value`，那么可以使用`value， pointer`向接收器变量赋值，然后进行调用
++ 如果接收器是指针那么只可以使用`pointer`向接收器变量赋值，不可以使用value赋值
+
+```go
+/* Pointer receiver and value receiver*/
+type Person struct {
+  name string
+  age int
+}
+
+type Address struct {
+  city, state string
+}
+
+func (p Person) Test() {
+  fmt.Println("Value receiver person", p.name, "age:", p.age)
+}
+
+func (a *Address) Test() {
+  fmt.Println("Pointer recevier address:", a.city, a.state)
+}
+
+
+fmt.Println("\nTest for value reciver and pointer receiver")
+  var d1 Tester
+  p1 := Person {"Jack", 35}
+  p2 := Person {"Jordan", 66}
+  d1 = p1
+  d1.Test()
+  d1 = &p2
+  d1.Test()
+
+  a1 := Address {"LosAngle", "California"}
+  d1 = &a1
+  d1.Test()
+//  d1 = a1    // 不可以使用该赋值，因为实现了该接口的是指针类型
+  a1.Test()    // 对于方法而言，不管接收器类型是指针还是值都可以
+               // 使用任何一种形式调用，编译器会自动进行编译
+  (&a1).Test()
+
+
+/*Test for value reciver and pointer receiver
+Value receiver person Jack age: 35
+Value receiver person Jordan age: 66
+Pointer recevier address: LosAngle California
+Pointer recevier address: LosAngle California
+Pointer recevier address: LosAngle California
+*/
+```
+
+如上述代码，对于类型变量`a1`可以使用指针类型或者使用值形式调用接扩中定义的方法，使用指针时编译器会自动为指针进行解引用操作`dereference`。
+
+对于使用value的实现接口的类型，可以使用value或者pointer向接口变量赋值。但是使用pointer接收器的类型，只可以使用pointer向接口赋值。因为`Tester`接口是`*Address`实现的，`Address`  没有进行实现。**原因是因为可以使用value调用的方法必须有一个指向该值的指针或者说可以取得该值的地址**，但是对于存储在接口变量中的具体指不可以取得其地址，因此也就不可以直接进行调用，也就无法完成赋值。
+
+## 4. 高级用法
+
+### 4.1 实现多个接口
+
+一个type可以实现多个接口，分别实现不同的功能。
+
+```go
+package main
+
+// Test for a practical usage of interface
+// different type use same method to implement inherit
+import (
+  "fmt"
+)
+
+type SalaryCalculator interface {
+  CalculateSalary() int
+  Display()
+}
+
+type SalaryChanger interface {
+  IncreaseBaisc(ins int)
+  DescreaseBasic(des int)
+}
+
+
+// 实现了多个接口，为了可以调用所有接口中的方法，需要定义一个总的接口
+type SalaryOptions interface {
+  SalaryCalculator
+  SalaryChanger
+}
+
+type Permanent struct {
+  empId string
+  basicpay int
+  pf int
+}
+
+type Contract struct {
+  empId string
+  basicpay int
+}
+
+//salary of permanent employee is sum of basic pay and pf
+func (p Permanent) CalculateSalary() int {
+  return p.basicpay + p.pf
+}
+
+func (p Permanent) Display() {
+  fmt.Printf("Permanent:%s salary:%d\n", p.empId, p.basicpay + p.pf)
+}
+
+func (p *Permanent) IncreaseBaisc(ins int) {
+  fmt.Printf("Now increase %s salry %d\n", p.empId, ins)
+  p.basicpay += ins
+}
+
+func (p *Permanent) DescreaseBasic(des int) {
+  fmt.Printf("Now descrease %s salry %d\n", p.empId, des)
+  p.basicpay -= des
+}
+
+// salary of contract is basic pay
+func (c Contract) CalculateSalary() int {
+  return c.basicpay
+}
+
+func (c Contract) Display() {
+  fmt.Println("Contract:%s salary:%d\n", c.empId, c.basicpay)
+}
+
+func (c *Contract) IncreaseBaisc(ins int) {
+  fmt.Printf("Now increase %s salry %d\n", c.empId, ins)
+  c.basicpay += ins
+}
+
+func (c *Contract) DescreaseBasic(des int) {
+  fmt.Printf("Now descrease %s salry %d\n", c.empId, des)
+  c.basicpay -= des
+}
+
+// calculate total employees' salary
+func TotalSalary(emps []SalaryCalculator) int{
+  expense := 0
+  for _, v := range emps {
+    expense += v.CalculateSalary()
+  }
+  return expense
+}
+
+func main() {
+  p1 := Permanent {
+    empId : "Td011",
+    basicpay: 12000,
+    pf: 2000,
+  }
+  c1 := Contract {
+    empId: "Ts110",
+    basicpay: 5000,
+  }
+  c2 := Contract {
+    empId: "Ts111",
+    basicpay: 6000,
+  }
+
+  var emps []SalaryCalculator = []SalaryCalculator{p1, c1, c2}
+  expense := TotalSalary(emps)
+  fmt.Println("All the employees")
+  fmt.Println(emps)
+  fmt.Println("Total salary:", expense)
+
+  var emp SalaryOptions = &p1    // 此处必须使用地址进行赋值
+  // 因为需要更改对于调用者可见，所以method只可以使用指针接收器
+  // 而实现该接口时使用指针接收器，所以实现该接口的是指针类型
+  // 只有指针类型才可以进行赋值，然后再调用其他操作
+  emp.DescreaseBasic(100)
+  emp.Display()    // 接收器为value，可以使用指针类型的接口进行调用，编译器自动解引用
+  emp.IncreaseBaisc(1000)
+  emp.Display()
+
+}
+```
+
+output：
+
+```go
+All the employees
+[{Td011 12000 2000} {Ts110 5000} {Ts111 6000}]
+Total salary: 25000
+Now descrease Td011 salry 100
+Permanent:Td011 salary:13900
+Now increase Td011 salry 1000
+Permanent:Td011 salary:14900
+```
+
+在以上代码中，两种type实现了两个接口，对于`SalaryChanger`接口中方法的实现，使用的是指针类型的接收器，对于`SalaryCalculator`接口的实现，使用的是value的接收器。并且定义了统一的接口`SalaryOption`作为两个接口的逻辑“父接口”，可以使用该变量调用所有操作。
+
+### 4.2 接口嵌套
+
+尽管golang中没有类的概念，也不提供继承机制，但是可以通过接口实现相似的功能，可以使用接口嵌套实现。
