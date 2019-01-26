@@ -43,6 +43,7 @@ func digits(number int) int {
   return sum
 }
 
+
 // Create the Wait group to wait all the Goroutines
 func worker(wg *sync.WaitGroup) {
   for job := range jobs {
