@@ -290,3 +290,54 @@ func main () {
 ```
 
 使用Goroutines的主要思想在于将不同函数的共同部分，提取出来，创建一个新的routines，并且执行。实现并发的操作。使用`close（ch chan type）`,用已关闭一个channel，对于一个channel可以配合`range`使用，获取该channel中所有的数据。
+
+## 5. 带有缓冲区的channel
+
+可以定义带有缓冲区的channel由于对于传输的数据进行缓冲，由于缓冲区为0的channel传输数据是阻塞的。对于有缓冲区的的channel，如果缓冲区满则发送方阻塞，如果缓冲区为空，则接收方阻塞。
+
+```go
+package main
+
+import (  
+    "fmt"
+    "time"
+)
+
+func write(ch chan int) {  
+    for i := 0; i < 5; i++ {
+        ch <- i
+        fmt.Println("successfully wrote", i, "to ch")
+    }
+    close(ch)
+}
+func main() {  
+    ch := make(chan int, 2)
+    go write(ch)
+    // time.Sleep(2 * time.Second)
+    for v := range ch {
+        fmt.Println("read value", v,"from ch")
+        time.Sleep(2 * time.Second)
+
+    }
+}
+
+/*
+output：
+successfully wrote 0 to ch  
+successfully wrote 1 to ch  
+read value 0 from ch  
+successfully wrote 2 to ch  
+read value 1 from ch  
+successfully wrote 3 to ch  
+read value 2 from ch  
+successfully wrote 4 to ch  
+read value 3 from ch  
+read value 4 from ch  
+*/
+```
+
+以上代码演示了发送方向一个缓冲区大小为2的channel发送数据，接收方每隔2s接受一个数据。刚开始缓冲区为空，所以此时接收方阻塞，发送方可以写入数据，写入两个后，发送方阻塞，伺候接收方每取走一个数据，发送发可以再发送一个数据。如果将`write()`函数中的`close（）`注释掉，那么就会造成死锁。因为接收方一直在等待接收数据而且channel也没有关闭。
+
+### 5.1 len and cap
+
+与切片中的概念一样，`capacity`代表了缓冲区的大小，是可以缓冲数据的最大数量。`length`代表了当前缓冲队列的长度。

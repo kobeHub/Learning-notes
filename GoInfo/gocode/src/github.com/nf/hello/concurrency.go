@@ -29,5 +29,9 @@ func main() {
               time.Minute, time.Minute, time.Second, time.Second)
 
   var test = make(chan int, 20)
-  fmt.Printf("The type of channel:%T\n", test)
+  fmt.Printf("The type of channel:%T, len:%v, cap:%v\n", test, len(test), cap(test))
+  test <- 122
+  test <- 11
+  fmt.Printf("After changed, Len:%v, cap:%v\n", len(test), cap(test))
+
 }
