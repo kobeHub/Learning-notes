@@ -78,3 +78,5 @@ All the routines finished
 + 当一个任务结束后，将结果写出到一个buffered channel
 + 可以从output channel读取结果
 
+### 2.2 具体实现
+
