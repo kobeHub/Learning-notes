@@ -90,7 +90,7 @@ func main() {
   go allocate(noOfJobs)
   done := make(chan bool)
   go result(done)
-  noOfWorkers := 10
+  noOfWorkers := 20
   createWorkerPool(noOfWorkers)
   <-done
 

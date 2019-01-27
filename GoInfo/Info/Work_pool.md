@@ -80,3 +80,81 @@ All the routines finished
 
 ### 2.2 具体实现
 
+先定义工作以及输出结果的结构体类型，并且定义传输Jobs的input channel以及传输result的output channel：
+
+```go
+type Job struct {  
+    id       int
+    randomno int
+}
+type Result struct {  
+    job         Job
+    sumofdigits int
+}
+
+var jobs = make(chan Job, 10)  
+var results = make(chan Result, 10)
+```
+
+由于需要实现一个线程池，其中所有的线程需要使用`sync.WaitGroup`对象进行阻塞等待。所以创建线程池时，根据需要使用的线程数量，添加Goroutines到定义好的WaitGroup中。并且将WaitGroup对象的指针作为routines的参数进行传递。
+
+```go
+
+```
+
+每一个线程的具体工作是从`Jobs`channel接收工作，执行该工作，得到`Result`并且写入`Results`中去。
+
+```go
+func worker(wg *sync.WaitGroup) {  
+    for job := range jobs {
+        output := Result{job, digits(job.randomno)}
+        results <- output
+    }
+    wg.Done()
+}
+func digits(number int) int {  
+    sum := 0
+    no := number
+    for no != 0 {
+        digit := no % 10
+        sum += digit
+        no /= 10
+    }
+    time.Sleep(2 * time.Second)
+    return sum
+}
+```
+
+根据任务数量分配任务，并且创建输出结果的routine
+
+```go
+func allocate(noOfJobs int) {  
+    for i := 0; i < noOfJobs; i++ {
+        randomno := rand.Intn(999)
+        job := Job{i, randomno}
+        jobs <- job
+    }
+    close(jobs)
+}
+func result(done chan bool) {  
+    for result := range results {
+        fmt.Printf("Job id %d, input random no %d , sum of digits %d\n", result.job.id, result.job.randomno, result.sumofdigits)
+    }
+    done <- true
+}
+func main() {  
+    startTime := time.Now()
+    noOfJobs := 100
+    go allocate(noOfJobs)
+    done := make(chan bool)
+    go result(done)
+    noOfWorkers := 10
+    createWorkerPool(noOfWorkers)
+    <-done
+    endTime := time.Now()
+    diff := endTime.Sub(startTime)
+    fmt.Println("total time taken ", diff.Seconds(), "seconds")
+}
+```
+
+使用更多的Routine作为workers，可以得到近似的线性性能提升。
