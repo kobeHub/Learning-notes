@@ -210,7 +210,7 @@ func findType(i interface{}) {
 **在使用接口变量时：**
 
 + 如果接收器是值`value`，那么可以使用`value， pointer`向接收器变量赋值，然后进行调用
-+ 如果接收器是指针那么只可以使用`pointer`向接收器变量赋值，不可以使用value赋值
++ 如果接收器是指针那么只可以使用`pointer`向接收器变量赋值，不可以使用`value`赋值
 
 ```go
 /* Pointer receiver and value receiver*/
