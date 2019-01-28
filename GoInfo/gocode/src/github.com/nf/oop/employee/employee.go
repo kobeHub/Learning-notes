@@ -17,3 +17,9 @@ func (e Employee) LeavesRemaining() {
               e.FirstName, e.LastName, (e.TotalLeaves - e.LeavesTaken))
 }
 
+// New function as a Constructor
+func New(firstName, lastName string, totalLeaves, leavesTaken int)  Employee {
+  e := Employee {firstName, lastName, totalLeaves, leavesTaken}
+  return e
+}
+
