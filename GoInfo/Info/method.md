@@ -123,7 +123,7 @@ The new address: Qingdao Shandong
 
 ## 3. 按值传递的接收器与参数按值传递
 
-为了简化问题，对于一个参数按值传递的函数`value argument`，只可以接受value作为函数的参数。对于按值传递的接收器`val;ue receiver` ，既可以使用值进行调用也可以使用指针进行调用。
+为了简化问题，对于一个参数按值传递的函数`value argument`，只可以接受value作为函数的参数。对于按值传递的接收器`value receiver` ，既可以使用值进行调用也可以使用指针进行调用。
 
 ```go
 package main
