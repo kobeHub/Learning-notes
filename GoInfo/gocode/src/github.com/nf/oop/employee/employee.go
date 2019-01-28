@@ -6,20 +6,33 @@ import (
 )
 
 // Define the struct with all fields exported
-type Employee struct {
-  FirstName, LastName string
-  TotalLeaves, LeavesTaken int
+type employee struct {
+  firstName, lastName string
+  totalLeaves, leavesTaken int
 }
 
 // Exported method with a receiver of Employee
-func (e Employee) LeavesRemaining() {
+func (e employee) LeavesRemaining() {
   fmt.Printf("%s %s has %d leaves remaining.\n",
-              e.FirstName, e.LastName, (e.TotalLeaves - e.LeavesTaken))
+              e.firstName, e.lastName, (e.totalLeaves - e.leavesTaken))
 }
 
 // New function as a Constructor
-func New(firstName, lastName string, totalLeaves, leavesTaken int)  Employee {
-  e := Employee {firstName, lastName, totalLeaves, leavesTaken}
+func New(firstName, lastName string, totalLeaves, leavesTaken int)  employee {
+  e := employee {firstName, lastName, totalLeaves, leavesTaken}
   return e
+}
+
+// Property of employee
+func (e employee) GetFirstName() string {
+  return e.firstName
+}
+
+func (e employee) GetLastName() string {
+  return e.lastName
+}
+
+func (e employee) GetTotal() int {
+  return e.totalLeaves
 }
 
