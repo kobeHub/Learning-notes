@@ -47,3 +47,9 @@ func (e employee) GetTotal() int {
 }
 ```
 
+## 2. 使用组合代替继承
+
+Golang不支持继承机制，但是支持组合`composition`。组合的一般定义是能将多个部分放在一起。在Golang中使用接阔的嵌套实现组合机制，
+
+### 2.1 接口的嵌套
+
