@@ -176,3 +176,66 @@ func (p Post) Detail() {
 }
 ```
 
+## 3. 多态 Polymorphism
+
+在golang中使用接口来实现多态。通过定义同一类型的接口，接口可以被隐式的实现。需要使用这个接口中的类型可以实现接口中的所有方法，然后使用接口变量指向这些类型变量量。实现多态操作。使用接口的最大好处在于提高了代码的可复用性，如果有新的类型需要加入到代码中，不需要更改其他部分，只需要添加该类型以及接口的实现。
+
+**一个接口类型的变量，可以指向任何一个实现了该接口的值。使用该特性来实现多态。**
+
+```go
+package main
+
+import (  
+    "fmt"
+)
+
+type Income interface {  
+    calculate() int
+    source() string
+}
+
+type FixedBilling struct {  
+    projectName string
+    biddedAmount int
+}
+
+type TimeAndMaterial struct {  
+    projectName string
+    noOfHours  int
+    hourlyRate int
+}
+
+func (fb FixedBilling) calculate() int {  
+    return fb.biddedAmount
+}
+
+func (fb FixedBilling) source() string {  
+    return fb.projectName
+}
+
+func (tm TimeAndMaterial) calculate() int {  
+    return tm.noOfHours * tm.hourlyRate
+}
+
+func (tm TimeAndMaterial) source() string {  
+    return tm.projectName
+}
+
+func calculateNetIncome(ic []Income) {  
+    var netincome int = 0
+    for _, income := range ic {
+        fmt.Printf("Income From %s = $%d\n", income.source(), income.calculate())
+        netincome += income.calculate()
+    }
+    fmt.Printf("Net income of organisation = $%d", netincome)
+}
+
+func main() {  
+    project1 := FixedBilling{projectName: "Project 1", biddedAmount: 5000}
+    project2 := FixedBilling{projectName: "Project 2", biddedAmount: 10000}
+    project3 := TimeAndMaterial{projectName: "Project 3", noOfHours: 160, hourlyRate: 25}
+    incomeStreams := []Income{project1, project2, project3}
+    calculateNetIncome(incomeStreams)
+}
+```
+
