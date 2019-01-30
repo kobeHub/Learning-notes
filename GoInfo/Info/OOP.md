@@ -51,5 +51,128 @@ func (e employee) GetTotal() int {
 
 Golang不支持继承机制，但是支持组合`composition`。组合的一般定义是能将多个部分放在一起。在Golang中使用接阔的嵌套实现组合机制，
 
-### 2.1 接口的嵌套
+### 2.1 结构体的嵌套
+
+在一个结构体中使用另一个结构体作为其域可以实现组合的机制，同时借助匿名域可以直接使用外部类型调用内部类型的方法。使用匿名域时只需要指明类型即可，不需要给一个域命名，但是匿名域每一个类型只可以有一个。
+
+```go
+// author of the post
+type author struct {
+  firstName, lastName string
+  bio string
+}
+
+// get the author full name
+func (a author) AuthorName() string {
+  return fmt.Sprintf("%s %s", a.firstName, a.lastName)
+}
+
+// struct of post, `author` field promoted
+// so Post type can use `AuthorName` directly
+type Post struct {
+  Title string
+  Content string
+  author
+}
+
+func (p Post) Detail() {
+  fmt.Println("Post:", p.Title)
+  fmt.Println("Content:", p.Content)
+  fmt.Println("Author:", p.AuthorName())
+  fmt.Println("Bio", p.bio)
+}
+```
+
+### 2.2 嵌套的切片类型
+
+可以在一个结构体内部定义另一个结构体的切片作为该结构体的域，但是注意如果需要访问该切片field，就不可以将其定义为匿名域
+
+```go
+type website struct {  
+        []post
+}
+func (w website) contents() {  
+    fmt.Println("Contents of Website\n")
+    for _, v := range w.posts {
+        v.details()
+        fmt.Println()
+    }
+}
+```
+
+编译器会报错：
+
+```shell
+syntax error: unexpected [, expecting field name or embedded type  
+```
+
+### 2.3 在其他包使用
+
+如果一个含有`unexported` field的struct需要在包外使用，需要在包外初始化该对象，那么可以通过`package.NewT()`, 方法来作为该对象的一个构造器。即使内部嵌套类型有一个无法导出的域，也需要使用该方式。
+
+```go
+// post/website.go
+package post
+
+import "fmt"
+
+// define the websites struct which contains posts
+type WebSite struct {
+  Posts []Post
+}
+
+// display the website msssage
+func (w WebSite) Display() {
+  fmt.Println("The content of the website:\n")
+  for _, po := range w.Posts {
+    po.Detail()
+    fmt.Println()
+  }
+}
+
+```
+
+```go
+// post/post.go
+package post
+
+/* define the post struct */
+import (
+  "fmt"
+)
+
+// author of the post
+type author struct {
+  firstName, lastName string
+  bio string
+}
+
+// get the author full name
+func (a author) AuthorName() string {
+  return fmt.Sprintf("%s %s", a.firstName, a.lastName)
+}
+
+func Newauthor(firstName, lastName, bio string) author {
+  return author{firstName, lastName, bio}
+}
+
+// struct of post, `author` field promoted
+// so Post type can use `AuthorName` directly
+type Post struct {
+  Title string
+  Content string
+  author
+}
+
+func NewPost(title, content string, a author) Post {
+  return Post{title, content, a}
+}
+
+func (p Post) Detail() {
+  fmt.Println("Post:", p.Title)
+  fmt.Println("Content:", p.Content)
+  fmt.Println("Author:", p.AuthorName())
+  fmt.Println("Bio:", p.bio)
+}
+```
 
