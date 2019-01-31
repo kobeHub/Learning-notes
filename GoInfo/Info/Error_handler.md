@@ -94,4 +94,4 @@ func (e *DNSError) Temporary() bool {
 }
 ```
 
-有两个方法返回bool值，分别表示由于超时或者临时错误.:
+有两个方法返回bool值，分别表示由于超时或者临时错误。
