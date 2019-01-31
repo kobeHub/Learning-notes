@@ -65,10 +65,6 @@ func main() {
 
 重点在于参数与原始的变量是否指向同一个地址。
 
-```go
-
-```
-
 ### 1.2 defers stack
 
 当一个函数中使用多个defer调用，那么这些调用的执行顺序按照栈的形式，后进先出(LIFO)。也就是最后一个`defer`语句先执行，然后向上返回。所以一组defer调用也具备了栈的性质，所以可以实现倒序等操作。
@@ -84,3 +80,56 @@ func main() {
 }
 ```
 
+## 2. `defer`的典型用法
+
+defer语句的主要作用是使得代码会更加简洁明了，通过defer函数或者方法可以对控制流进行改变。典型用例是用在一个`sync.WaitGroup`对象的`Done`方法。
+
+```go
+package main
+
+/*Pratical usage cases of the defer statement */
+import (
+  "fmt"
+  "sync"
+)
+
+type rect struct {
+  length, width float64
+}
+
+func (r rect) area(wg *sync.WaitGroup) {
+  defer wg.Done()
+  if r.width <= 0 {
+    fmt.Println("The width of rect must be positive")
+    return
+  }
+  if r.length <= 0 {
+    fmt.Println("The length of rect must be positive")
+    return
+  }
+  area := r.length * r.width
+  fmt.Println("The area of rect:", area)
+}
+
+func main() {
+  r1 := rect{12.0, -9.2}
+  r2 := rect{11.2, 2}
+  r3 := rect{11., -90.}
+  rects := []rect{r1, r2, r3}
+  var wg sync.WaitGroup
+  for _, item := range rects {
+    wg.Add(1)
+    go item.area(&wg)
+  }
+  wg.Wait()
+  fm
+    t.Println("All the routine finished")
+}
+/*The width of rect must be positive
+The width of rect must be positive
+The area of rect: 22.4
+All the routine finished
+*/
+```
+
+由于在进行条件判断时，每次在程序返回前都必须执行`wg.Done()`方法，通过使用defer语句不仅使得代码更加简洁，而且当有新的条件需要加入时，不需要担心是否添加了`wg.Done（）`方法。
