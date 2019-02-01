@@ -95,3 +95,32 @@ func (e *DNSError) Temporary() bool {
 ```
 
 有两个方法返回bool值，分别表示由于超时或者临时错误。
+
+### 2.3 直接比较
+
+第三种方法是使用一个`error`类型的变量直接进行比较。*ErrBadPattern* 定义在`filepath`package中：
+
+```go
+var ErrBadPattern = errors.New("syntax error in pattern")
+```
+
+该错误产生于当filepath包中的Glob函数中传入的pattern不合法时。
+
+```go
+package main
+
+import (  
+    "fmt"
+    "path/filepath"
+)
+
+func main() {  
+    files, error := filepath.Glob("[")
+    if error != nil && error == filepath.ErrBadPattern {
+        fmt.Println(error)
+        return
+    }
+    fmt.Println("matched files", files)
+}
+```
+
