@@ -9,7 +9,8 @@
 //    println!("{}", unsafe { type_name::<T>() });
 //}
 
-
+mod string;
+use crate::string::str_string;
 // Define the trait of join tuple into string
 // Then can be printed
 trait JoinTuple {
@@ -126,7 +127,9 @@ fn format_print() {
 }
 
 fn main() {
-    immutable_test();
-    rev_out();
-    format_print();
+    //immutable_test();
+    //rev_out();
+    //format_print();
+   str_string::string_test();
+   str_string::copy_test();
 }
