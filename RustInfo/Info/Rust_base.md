@@ -153,7 +153,7 @@ now iteral the array:
 
 对于一个整形变量而言，如果存输的值超过其范围，就会造成溢出。但在debug模式下编译代码时，Rust会检查这些问题并且使得程序`panic`,因错误而退出。
 
-但是在release模式下，Rust不检测溢出。将溢出值进行`two‘s complement wrapping`的操作，`255u8`-->`0u8`, `257u8`-->`1u8`.如果程序要使用这种错误可以使用标准库中的`wrapping`。
+但是在release模式下，Rust不检测溢出。将溢出值进行`two‘s complement wrapping`的操作，`256u8`-->`0u8`, `257u8`-->`1u8`.如果程序要使用这种错误可以使用标准库中的`wrapping`。
 
 
 
