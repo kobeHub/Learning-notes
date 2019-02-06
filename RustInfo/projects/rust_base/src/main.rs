@@ -11,6 +11,7 @@
 
 mod string;
 use crate::string::str_string;
+use crate::string::slice;
 // Define the trait of join tuple into string
 // Then can be printed
 trait JoinTuple {
@@ -139,4 +140,6 @@ fn main() {
    str_string::append(&mut s1);
    println!("After append:{}", s1);
    str_string::mut_refer();
+   println!("Find first word:{}",
+            slice::first_world(&"Find fiest word!"));
 }
