@@ -25,6 +25,24 @@ pub fn string_test() {
     println!("{}", heart);
 }
 
+// return the ownership of string by return string
+pub fn calculate_length(s: String) -> (String, usize) {
+    let length = s.len();
+    (s, length)
+}
+
+// mutable reference to modify the value
+pub fn append(some_string: &mut String) {
+    some_string.push_str(", Rustean");
+}
+
+pub fn mut_refer() {
+    let mut s = String::from("the mutable string");
+    let s1 = &s;
+    let s2 = &s;
+    println!("{}{}", s1, s2);
+}
+
 pub fn copy_test() {
     let x = 5;
     let y = x;

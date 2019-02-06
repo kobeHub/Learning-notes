@@ -132,4 +132,11 @@ fn main() {
     //format_print();
    str_string::string_test();
    str_string::copy_test();
+   let s: String = "Hello".into();
+   let (mut s1, len) = str_string::calculate_length(s);
+   println!("String:{}, length:{}", s1, len);
+
+   str_string::append(&mut s1);
+   println!("After append:{}", s1);
+   str_string::mut_refer();
 }
