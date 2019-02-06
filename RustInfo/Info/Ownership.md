@@ -167,9 +167,79 @@ fn makes_copy(some_integer: i32) { // some_integer 进入作用域
 } // 这里，some_integer 移出作用域。不会有特殊操作
 ```
 
+注意一个变量的所有权如果不在其作用域中进行转移，那么在作用域结束后，该变量将不可用。所以在计算一个string长度的函数中，为了使得变量可用，必须采用以下操作。
 
+```rust
+// return the ownership of string by return string
+pub fn calculate_length(s: String) -> (String, usize) {
+    let length = s.len();
+    (s, length)
+}
+```
 
+## 3. 引用
 
+为了避免以上问题，可以使用**引用**。使用变量的引用不获取其所有权，所以变量在之后还可以继续使用。
 
- 
+![](https://rustlang-cn.org/assets/img/trpl04-05.4b14ca48.svg)
+
+`s = &s1`,使用引用操作，可以使用对应值不获取其所有权。引用的对应操作是解引用`*`，使用引用并不获得对应的值，所以在引用离开作用域时，对应的值并不会消失。通常将一个变量的引用用于函数的参数，避免多余的所有权转移操作。将获取引用作为函数的参数称为**借用（borrowing）**。
+
+注意，由于变量的默认不可变性，如果需要改变引用的值，需要使用可变引用。`&mut type`.
+
+```rust
+// mutable reference to modify the value
+pub fn append(some_string: &mut String) {
+    some_string.push_str(", Rustean");
+}
+
+str_string::append(&mut s1);  // mut s1
+println!("After append:{}", s1)
+
+```
+
+注意使用可变引用的前提是变量是可变的。**注意可变引用有一个很大的限制，在特定的作用域中对于一个特定的数据，有且仅有一个可变引用，使用唯一的可变引用，可以避免可能的数据多处修改，从而避免了数据竞争。**数据竞争类似于竞争条件。需要满足以下条件：
+
++ 两个或者多个指针同时访问同一数据
++ 至少一个指针试图写入数据
++ 没有同步的数据访问机制
+
+**同时不可以在拥有不可变引用的同时，使用可变引用，因为不可变引用用户不期望数据发生变化。**
+
+```rust
+error[E0499]: cannot borrow `s` as mutable more than once at a time             
+  --> src/string/str_string.rs:42:14                                            
+   |                                                                            
+41 |     let s1 = &mut s;                                                       
+   |              ------ first mutable borrow occurs here                       
+42 |     let s2 = &mut s;                                                       
+   |              ^^^^^^ second mutable borrow occurs here                      
+43 |     println!("{}{}", s1, s2);                                              
+   |                      -- first borrow later used here              
+```
+
+## 4. 垂直引用
+
+在具有指针的语言中，很容易出现垂直指针，也就是指向已经释放内存的变量的指针。但是Rust中的引用永远不会出现垂直引用，会在编译时报错。
+
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String {
+    let s = String::from("hello");
+
+    &s
+}
+/*error[E0106]: missing lifetime specifier
+ --> main.rs:5:16
+  |
+5 | fn dangle() -> &String {
+  |                ^ expected lifetime parameter
+  |
+  = help: this function's return type contains a borrowed value, but there is
+  no value for it to be borrowed from
+  = help: consider giving it a 'static lifetime*/
+```
 
