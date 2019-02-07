@@ -5,6 +5,11 @@ import (
   "reflect"
 )
 
+func clear(item []int) {
+  item = item[:0]
+  fmt.Printf("After clear:%v, %v, %v\n", item, len(item), cap(item));
+}
+
 func subtactOne(num []int) {
   for i := range num {
     num[i]--
@@ -49,4 +54,6 @@ func main() {
 
   fmt.Println(reflect.ValueOf(pls).Kind())
   }
+
+  clear(arr[:])
 }
