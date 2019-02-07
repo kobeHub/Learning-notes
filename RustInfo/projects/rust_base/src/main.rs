@@ -12,6 +12,12 @@
 mod string;
 use crate::string::str_string;
 use crate::string::slice;
+
+mod structs;
+use crate::structs::create_struct;
+use crate::structs::rectangle;
+
+
 // Define the trait of join tuple into string
 // Then can be printed
 trait JoinTuple {
@@ -142,4 +148,25 @@ fn main() {
    str_string::mut_refer();
    println!("Find first word:{}",
             slice::first_world(&"Find fiest word!"));
+
+   println!();
+   let user = String::from("Kobe Bryant");
+   let email = String::from("inno@gmail.com");
+   create_struct::create(email, user);
+
+   println!();
+   create_struct::tuple_struct();
+
+   println!();
+   let rect = rectangle::Rectangle(12, 13);
+   println!("{:?} use area function: {}", rect, rectangle::Area(&rect));
+   println!("use rectangle methods:{}", rect.area());
+   let square = rectangle::Rectangle::Square(11);
+   println!("The square is:{:?} area: {}", square, square.area());
+   println!("first rect can hold the second? {}", rect.can_hold(&square));
+
+   let mut rect1 = rectangle::Rectangle(10, 5);
+   println!("Now increase rect1 {:?} by (12, 10)", rect1);
+   rect1.Increase(12, 10);
+   println!("{:#?}", rect1);
 }
