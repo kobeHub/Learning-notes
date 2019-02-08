@@ -56,4 +56,6 @@ func main() {
   }
 
   clear(arr[:])
+  test1 := make([]byte, 12)
+  fmt.Println("The length:", len(test1), cap(test1))
 }
