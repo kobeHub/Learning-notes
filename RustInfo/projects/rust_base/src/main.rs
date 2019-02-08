@@ -17,7 +17,9 @@ mod structs;
 use crate::structs::create_struct;
 use crate::structs::rectangle;
 
-
+mod enums;
+use crate::enums::ip_addr;
+use crate::enums::message;
 // Define the trait of join tuple into string
 // Then can be printed
 trait JoinTuple {
@@ -169,4 +171,18 @@ fn main() {
    println!("Now increase rect1 {:?} by (12, 10)", rect1);
    rect1.Increase(12, 10);
    println!("{:#?}", rect1);
+
+   println!();
+   let host: String = "127.0.0.1".into();
+   ip_addr::ip_struct(host);
+
+   println!("The ip address use enums:");
+   let local4 = ip_addr::IpAddr::V4(127, 0, 0, 1);
+   let local6 = ip_addr::IpAddr::V6(String::from("::1"));
+   println!("{:#?}, {:#?}", local4, local6);
+   println!("\nnow send a Quit message\n...");
+   let quit = message::Message::Quit(local4);
+   println!("{:?}", quit);
+   quit.call();
+
 }
