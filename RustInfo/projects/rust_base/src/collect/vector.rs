@@ -27,12 +27,14 @@ pub fn iter_vec(v: &Vec<i32>) {
 }
 
 pub fn add_one(v: &mut Vec<i32>) {
+    let v1 = v.clone();
     for i in v {
         *i += 1;
+        //print!("{} ", i);
+    }
+    for i in v1 {
         print!("{} ", i);
     }
-    //for i in v {
-    //}
     println!();
 }
 
