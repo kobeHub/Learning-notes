@@ -28,3 +28,12 @@ pub fn value_in_coin(coin: &Coin) -> u32 {
         },
     }
 }
+
+// deal with the Quarter case
+pub fn quarter(coin: &Coin) {
+    if let Coin::Quarter(state) = coin {
+        println!("State quarter from {:?}", state);
+    } else {
+        println!("not quarter coin");
+    }
+}

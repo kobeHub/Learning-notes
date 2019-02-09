@@ -137,3 +137,18 @@ pub fn some_u8_value(x: &u8) {
 }
 ```
 
+## 3. `if...let`语法糖
+
+可以使用`if...let`语法糖代替`match`中的单一case。不需要穷尽所有一个枚举类型的所有成员，只对特定的一个成员进行处理。也可以配合`else`使用，对于其他情形进行处理，相当于通配符`_`。
+
+```rust
+// deal with the Quarter case
+pub fn quarter(coin: &Coin) {
+    if let Coin::Quarter(state) = coin {
+        println!("State quarter from {:?}", state);
+    } else {
+        println!("not quarter coin");
+    }
+}
+```
+

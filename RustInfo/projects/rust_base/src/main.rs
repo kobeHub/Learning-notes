@@ -194,6 +194,7 @@ fn main() {
    println!("Value of the coin:{}, {:?}", coin::value_in_coin(&penny), penny);
    let quater = coin::Coin::Quarter(coin::UsState::Alabama);
    println!("Value of quater:{}", coin::value_in_coin(&quater));
+   coin::quarter(&quater);
 
    println!("\nThe option usage:");
    let mut five = Some(5);
@@ -208,5 +209,6 @@ fn main() {
    let (uint1, uint2) = (1u8, 100u8);
    option::some_u8_value(&uint1);
    option::some_u8_value(&uint2);
+
 
 }

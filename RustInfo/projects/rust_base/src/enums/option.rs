@@ -23,3 +23,4 @@ pub fn some_u8_value(x: &u8) {
         _ => (),
     }
 }
+
