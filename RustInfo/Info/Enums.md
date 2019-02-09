@@ -64,6 +64,8 @@ Tony Hoare，null 的发明者，在他 2009 年的演讲 “Null References: Th
 
 空值的问题在于尝试像一个非空值一样使用空值，会出现形式的错误。但是空值表达的概念是有意义的：空值是由于某种原因目前缺失或者无效的值。使用`Option<T>`枚举表示空值，定义于标准库中。
 
+### 2.1 基本使用
+
 ```rust
 enum Option<T> {
     Some(T),
@@ -103,5 +105,35 @@ not satisfied
   |
 ```
 
- 
+### 2.2 使用`match`语句获取some值
+
+可以使用`match`语句绑定匹配分支的部分值，可以使用这种方式从枚举成员中提取值。**在Rust中，使用（）表示没有表达式，没有语句。在使用match进行枚举类型的模式匹配时，必须穷尽所有的类型成员。所以在对于`Option<T>`进行处理时，也就不会忽略空值，而必须对于控制进行处理**。所以如果匹配到None时可以直接指向`()`不进行任何操作。
+
+```rust
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(i) => Some(i + 1),
+    }
+}
+
+let five = Some(5);
+let six = plus_one(five);
+let none = plus_one(None);
+```
+
+ ### 2.3 使用`_`通配符
+
+如果对于一个枚举类型的所有成员不想一一进行处理。可以使用`_`通配符匹配所有没有定义的成员。
+
+```rust
+pub fn some_u8_value(x: &u8) {
+    match x {
+        1 => println!("one"),
+        2 => println!("two"),
+        3 => println!("three"),
+        _ => (),
+    }
+}
+```
 

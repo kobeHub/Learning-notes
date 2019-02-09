@@ -20,6 +20,10 @@ use crate::structs::rectangle;
 mod enums;
 use crate::enums::ip_addr;
 use crate::enums::message;
+use crate::enums::coin;
+use crate::enums::option;
+
+
 // Define the trait of join tuple into string
 // Then can be printed
 trait JoinTuple {
@@ -184,5 +188,25 @@ fn main() {
    let quit = message::Message::Quit(local4);
    println!("{:?}", quit);
    quit.call();
+
+   println!();
+   let penny = coin::Coin::Penny;
+   println!("Value of the coin:{}, {:?}", coin::value_in_coin(&penny), penny);
+   let quater = coin::Coin::Quarter(coin::UsState::Alabama);
+   println!("Value of quater:{}", coin::value_in_coin(&quater));
+
+   println!("\nThe option usage:");
+   let mut five = Some(5);
+   let mut no = None;
+   option::plus_one(&mut five);
+   option::plus_one(&mut no);
+   println!("{:?}\t{:?}", five, no);
+   let six = Some(6);
+   let none = None;
+   println!("{:?}, {:?}", option::Plus_one(six), option::Plus_one(none));
+
+   let (uint1, uint2) = (1u8, 100u8);
+   option::some_u8_value(&uint1);
+   option::some_u8_value(&uint2);
 
 }
