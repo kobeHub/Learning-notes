@@ -5,11 +5,11 @@ pub struct Rectangle {
     length: u64,
 }
 
-pub fn Rectangle(width: u64, length: u64) -> Rectangle {
+pub fn rectangle(width: u64, length: u64) -> Rectangle {
     Rectangle{width, length}
 }
 
-pub fn Area(rectangle: &Rectangle) -> u64 {
+pub fn area(rectangle: &Rectangle) -> u64 {
     rectangle.width * rectangle.length
 }
 
@@ -24,11 +24,11 @@ impl Rectangle {
     }
 
     // associated function of the struct
-    pub fn Square(size: u64) -> Rectangle {
+    pub fn square(size: u64) -> Rectangle {
         Rectangle{width: size, length: size}
     }
 
-    pub fn Increase(&mut self, wid: u64, len: u64) {
+    pub fn increase(&mut self, wid: u64, len: u64) {
         self.width += wid;
         self.length += len;
     }

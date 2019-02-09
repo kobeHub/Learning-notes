@@ -10,19 +10,18 @@
 //}
 
 mod string;
-use crate::string::str_string;
-use crate::string::slice;
 
 mod structs;
-use crate::structs::create_struct;
-use crate::structs::rectangle;
+use crate::structs::{create_struct, rectangle};
+
 
 mod enums;
-use crate::enums::ip_addr;
-use crate::enums::message;
-use crate::enums::coin;
-use crate::enums::option;
+use crate::enums::{ip_addr, message, coin, option};
+//use crate::enums::message;
+//use crate::enums::coin;
+//use crate::enums::option;
 
+mod collect;
 
 // Define the trait of join tuple into string
 // Then can be printed
@@ -140,75 +139,101 @@ fn format_print() {
 }
 
 fn main() {
-    //immutable_test();
-    //rev_out();
-    //format_print();
-   str_string::string_test();
-   str_string::copy_test();
-   let s: String = "Hello".into();
-   let (mut s1, len) = str_string::calculate_length(s);
-   println!("String:{}, length:{}", s1, len);
+    immutable_test();
+    rev_out();
+    format_print();
 
-   str_string::append(&mut s1);
-   println!("After append:{}", s1);
-   str_string::mut_refer();
-   println!("Find first word:{}",
-            slice::first_world(&"Find fiest word!"));
+    {
+        println!("String usage:");
+        use crate::string::{str_string, slice};
+        str_string::string_test();
+        str_string::copy_test();
+        let s: String = "Hello".into();
+        let (mut s1, len) = str_string::calculate_length(s);
+        println!("String:{}, length:{}", s1, len);
 
-   println!();
-   let user = String::from("Kobe Bryant");
-   let email = String::from("inno@gmail.com");
-   create_struct::create(email, user);
+        str_string::append(&mut s1);
+        println!("After append:{}", s1);
+        str_string::mut_refer();
+        println!("Find first word:{}",
+                slice::first_world(&"Find fiest word!"));
+    }
 
-   println!();
-   create_struct::tuple_struct();
+    println!("\n\n");
 
-   println!();
-   let rect = rectangle::Rectangle(12, 13);
-   println!("{:?} use area function: {}", rect, rectangle::Area(&rect));
-   println!("use rectangle methods:{}", rect.area());
-   let square = rectangle::Rectangle::Square(11);
-   println!("The square is:{:?} area: {}", square, square.area());
-   println!("first rect can hold the second? {}", rect.can_hold(&square));
+    {
+        println!("Struct usage:");
+        let user = String::from("Kobe Bryant");
+        let email = String::from("inno@gmail.com");
+        create_struct::create(email, user);
 
-   let mut rect1 = rectangle::Rectangle(10, 5);
-   println!("Now increase rect1 {:?} by (12, 10)", rect1);
-   rect1.Increase(12, 10);
-   println!("{:#?}", rect1);
+        println!();
+        create_struct::tuple_struct();
 
-   println!();
-   let host: String = "127.0.0.1".into();
-   ip_addr::ip_struct(host);
+        println!();
+        let rect = rectangle::rectangle(12, 13);
+        println!("{:?} use area function: {}", rect, rectangle::area(&rect));
+        println!("use rectangle methods:{}", rect.area());
+        let square = rectangle::Rectangle::square(11);
+        println!("The square is:{:?} area: {}", square, square.area());
+        println!("first rect can hold the second? {}", rect.can_hold(&square));
 
-   println!("The ip address use enums:");
-   let local4 = ip_addr::IpAddr::V4(127, 0, 0, 1);
-   let local6 = ip_addr::IpAddr::V6(String::from("::1"));
-   println!("{:#?}, {:#?}", local4, local6);
-   println!("\nnow send a Quit message\n...");
-   let quit = message::Message::Quit(local4);
-   println!("{:?}", quit);
-   quit.call();
+        let mut rect1 = rectangle::rectangle(10, 5);
+        println!("Now increase rect1 {:?} by (12, 10)", rect1);
+        rect1.increase(12, 10);
+        println!("{:#?}", rect1);
+    }
 
-   println!();
-   let penny = coin::Coin::Penny;
-   println!("Value of the coin:{}, {:?}", coin::value_in_coin(&penny), penny);
-   let quater = coin::Coin::Quarter(coin::UsState::Alabama);
-   println!("Value of quater:{}", coin::value_in_coin(&quater));
-   coin::quarter(&quater);
+    println!("\n\n");
 
-   println!("\nThe option usage:");
-   let mut five = Some(5);
-   let mut no = None;
-   option::plus_one(&mut five);
-   option::plus_one(&mut no);
-   println!("{:?}\t{:?}", five, no);
-   let six = Some(6);
-   let none = None;
-   println!("{:?}, {:?}", option::Plus_one(six), option::Plus_one(none));
+    {
+        println!("Enumerations and match usage:");
+        let host: String = "127.0.0.1".into();
+        ip_addr::ip_struct(host);
 
-   let (uint1, uint2) = (1u8, 100u8);
-   option::some_u8_value(&uint1);
-   option::some_u8_value(&uint2);
+        println!("The ip address use enums:");
+        let local4 = ip_addr::IpAddr::V4(127, 0, 0, 1);
+        let local6 = ip_addr::IpAddr::V6(String::from("::1"));
+        println!("{:#?}, {:#?}", local4, local6);
+        println!("\nnow send a Quit message\n...");
+        let quit = message::Message::Quit(local4);
+        println!("{:?}", quit);
+        quit.call();
 
+        println!();
+        let penny = coin::Coin::Penny;
+        println!("Value of the coin:{}, {:?}", coin::value_in_coin(&penny), penny);
+        let quater = coin::Coin::Quarter(coin::UsState::Alabama);
+        println!("Value of quater:{}", coin::value_in_coin(&quater));
+        coin::quarter(&quater);
 
+        println!("\nThe option usage:");
+        let mut five = Some(5);
+        let mut no = None;
+        option::plus_one(&mut five);
+        option::plus_one(&mut no);
+        println!("{:?}\t{:?}", five, no);
+        let six = Some(6);
+        let none = None;
+        println!("{:?}, {:?}", option::plus_one_(six), option::plus_one_(none));
+
+        let (uint1, uint2) = (1u8, 100u8);
+        option::some_u8_value(&uint1);
+        option::some_u8_value(&uint2);
+
+    }
+
+    println!("\n\n");
+
+    {
+        println!("\nThe vector part:");
+       //mod collect;
+        use crate::collect::vector;
+        vector::test_vec();
+        let v1 = vec![12, 23, 55];
+        let mut v2 = vec![12, 55, 7];
+        vector::iter_vec(&v1);
+        vector::add_one(&mut v2);
+        println!("{:?}", v2);
+    }
 }

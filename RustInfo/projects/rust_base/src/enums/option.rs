@@ -8,7 +8,7 @@ pub fn plus_one(x: &mut Option<i32>) {
     }
 }
 
-pub fn Plus_one(x: Option<i32>) -> Option<i32> {
+pub fn plus_one_(x: Option<i32>) -> Option<i32> {
     match x {
         None => None,
         Some(x) => Some(x + 1),

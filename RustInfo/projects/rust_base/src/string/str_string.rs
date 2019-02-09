@@ -1,11 +1,11 @@
 /* Test for str and string*/
-pub fn str_string() {
-    let a = "It's a str";
-    let b = String::from("It's a string");
-    //let () = a;
-    //let () = b;
-    println!("{}, {}", a, b);
-}
+//pub fn str_string() {
+//    let a = "It's a str";
+//    let b = String::from("It's a string");
+//    //let () = a;
+//    //let () = b;
+//    println!("{}, {}", a, b);
+//}
 
 pub fn string_test() {
     println!("Just a simple usage of String");
@@ -37,7 +37,7 @@ pub fn append(some_string: &mut String) {
 }
 
 pub fn mut_refer() {
-    let mut s = String::from("the mutable string");
+    let s = String::from("the mutable string");
     let s1 = &s;
     let s2 = &s;
     println!("{}{}", s1, s2);
