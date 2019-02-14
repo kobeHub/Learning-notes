@@ -228,12 +228,18 @@ fn main() {
     {
         println!("\nThe vector part:");
        //mod collect;
-        use crate::collect::vector;
+        use crate::collect::{string, vector};
         vector::test_vec();
         let v1 = vec![12, 23, 55];
         let mut v2 = vec![12, 55, 7];
         vector::iter_vec(&v1);
         vector::add_one(&mut v2);
         println!("{:?}", v2);
+        println!("String from collect:");
+
+        string::represent();
+        string::build_string();
+        string::length_test();
+        string::three_format();
     }
 }

@@ -105,3 +105,160 @@ for i in &v {
 }
 ```
 
+## 2. 字符串
+
+### 2.1 什么是字符串
+
+Rust 倾向于确保暴露所有可能的问题，所以会更涉及有关字符串本质的东西。String 是一个比很多程序员想象中更难的数据结构，再结合 UTF-8，难度较大。在 Rust 中，核心语言中只有一种字符串：`str`， 字符串切片，通常以借用的形式出现，`&str`.字符串切片是存储在别处的 utf-8 编码字符串数据的引用。字符串字面值存储在程序的二进制输出中。
+
+`String`类型是由标准库提供的，没有写进核心语言部分，是可变可增长的，有所有权的，utf-8编码的字符串类型。当 Rustacean 们谈到 Rust 的 “字符串”时，它们通常指的是 `String` 和字符串 slice `&str` 类型，而不仅仅是其中之一。
+
+### 2.2 创建字符串
+
++ `fn new() -> String`:
+  创建一个新的空字符串，不分配初始空间，意味着该操作的消耗很小，但是之后添加数据的操作可能造成溢出，如果可以得知大致空间可以使用以下函数。
+
++ `fn with_capacity(capacity: usize) -> String`
+
+  创建一个规定了初始容量的String
+
++ `fn from_utf8(vec: Vec<u8>) -> Result<String, FromUtf8Error>`:
+  将一个 bytes 的向量转化为 String，一个字符串切片来自于 bytes（u8），而bytes向量则是由 bytes 组成。可以使用该函数进行转化，但不是所有的 bytes 向量都可以转化为 String，必须满足 utf-8 编码。
+
+  ```rust
+  // some bytes, in a vector
+  let sparkle_heart = vec![240, 159, 146, 150];
+  
+  // We know these bytes are valid, so we'll use `unwrap()`.
+  let sparkle_heart = String::from_utf8(sparkle_heart).unwrap();
+  
+  assert_eq!("💖", sparkle_heart);
+  ```
+
++ #### `fn from_utf8_lossy(v: &'a [u8]) -> Cow<'a, str>`
+
+  将一个 bytes 的切片转化为 String，包含非法字符。String 由 `u8`组成， bytes 切片来自于 bytes。该函数进行两者间的转化。
+
++ #### `unsafe fn from_raw_parts(buf: *mut u8, length: usize, capacity: usize) -> String`：
+
+  使用指针，容量，长度，创建一个 String
+
+  ```rust
+  use std::mem;
+  
+  unsafe {
+      let s = String::from("hello");
+      let ptr = s.as_ptr();
+      let len = s.len();
+      let capacity = s.capacity();
+  
+      mem::forget(s);
+  
+      let s = String::from_raw_parts(ptr as *mut _, len, capacity);
+  
+      assert_eq!(String::from("hello"), s);
+  }
+  ```
+
+### 2.3 字符串更新
+
++ #### `fn push(&mut self, ch: char)`
+
+  在一个String的末尾添加一个字符
+
++ `fn pop(&mut self) -> Option<char>`
+
+  移除最后一个字符并且返回
+
++ `fn insert(&mut self, idx: usize, ch: char)`
+
+  在一个指定位置添加一个字符，这是一个`O(n)`的操作，因为每一个字符需要复制到 buffer 中去。
+
++ `fn clear(&mut self)`
+
+  清空一个字符串
+
++ `fn truncate(&mut self, new_len: usize)`:
+  将一个字符串裁剪到指定长度。如果参数中的长度大于当前长度，操作无效。
+
++ 使用`+`， format 宏拼接字符串
+
+  ```rust
+  let s1 = String::from("Hello, ");
+  let s2 = String::from("world!");
+  let s3 = s1 + &s2; // 注意 s1 被移动了，不能继续使用
+  ```
+
+  对于所有`str`类型可以使用的方法，String 类型也可以使用，因为`String`实现了`Deref <Target=str>`,所以可以继承`str`的所有方法，在一个使用`&str`类型的方法中，可以使用`&String`进行调用，被强制转化为`&str`，该方法被称为，**解引用强制多态（deref coercion）**，可以将其理解为，使用了`&s[..]`.
+
+### 3.3 索引字符串
+
+很多语言中，可以通过索引字符串的单个字符进行操作，但是Rust不允许该操作。这就要涉及到`String`的内部表现，由于存储的是 utf-8 编码，所以使用`len（）`方法时，返回的是需要使用的 utf-8 编码的字节数。Rust 不允许使用索引获取 `String` 字符的原因是索引操作预期总是需要常数时间 (O(1))。但是对于 `String` 不可能保证这样的性能，因为 Rust 不得不检查从字符串的开头到索引位置的内容来确定这里有多少有效的字符。由于存储的大小不一致，所以也就没有可能对于String类型进行索引。
+
+```rust
+pub fn length_test() {
+    let as1 = String::from("Hello");
+    let uni1 = String::from("你好啊朋友");  // 中文字符需要三个字节进行编码
+    println!("{}, len:{}", as1, as1.len());
+    println!("{}, len:{}", uni1, uni1.len());
+}
+/*Hello, len:5
+你好啊朋友, len:15
+*/
+```
+
+#### 字节，标量值，字形簇
+
+从 Rust 的角度来说，可以从三个方面理解字符串。
+
+字形簇最接近字母的概念，标量值对应 Unicode 编码标量值，字节对应实际存储的字节码。以梵文“नमस्ते”为例：
+
++ 字节：
+
+  ```
+  [224, 164, 168, 224, 164, 174, 224, 164, 184, 224, 165, 141, 224, 164, 164,
+  224, 165, 135]
+  ```
+
++ 标量值：
+
+  ```
+  ['न', 'म', 'स', '्', 'त', 'े']
+  ```
+
++ 字形簇：
+
+  ```
+  ["न", "म", "स्", "ते"]
+  ```
+
+### 3.4 遍历字符串
+
+对于字符串建立slice通常是一个坏点子，因为字符串索引返回的类型是不明确的：字节值、字符、字形簇、字符串 slice，可能会造成错误的索引，需要谨慎使用。
+
+```rust
+let hello = "Здравствуйте";
+
+let s = &hello[0..1];
+thread 'main' panicked at 'byte index 1 is not a char boundary; it is inside 'З' (bytes 0..2) of `Здравствуйте`', src/libcore/str/mod.rs:2188:4
+```
+
+可以使用其他获取字符串单个元素的方法，可以使用`bytes(), char()`进行转化：
+
+```rust
+pub fn three_format() {
+    let data = String::from("नमस्ते");
+    //let chars = data.chars();
+    //println!("{}, {:?}, {:?}", data, bytes, chars);
+    for i in data.chars() {
+        print!("{} ", i);
+    }
+    println!();
+    for i in data.bytes() {
+        print!("{} ", i);
+    }
+    println!();
+
+}
+```
+
