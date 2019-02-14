@@ -228,7 +228,7 @@ fn main() {
     {
         println!("\nThe vector part:");
        //mod collect;
-        use crate::collect::{string, vector};
+        use crate::collect::{string, vector, hashmap};
         vector::test_vec();
         let v1 = vec![12, 23, 55];
         let mut v2 = vec![12, 55, 7];
@@ -241,5 +241,12 @@ fn main() {
         string::build_string();
         string::length_test();
         string::three_format();
+
+        println!("HashMap usage:");
+        hashmap::create();
+        hashmap::update();
+        let text = "It's just a test and test again for usage";
+        hashmap::count_words(text);
+
     }
 }

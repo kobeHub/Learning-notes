@@ -96,7 +96,7 @@ println!("The first element is: {}", first);
 
 因为一个可变借用以及不可变借用不可以同时存在，或者说该作用域中如果有一个可变引用，那么仅有这一个。
 
-### 1.5 遍历操作
+### 1.5 遍历操作  
 
 ```rust
 let v = vec![100, 32, 57];
@@ -260,5 +260,70 @@ pub fn three_format() {
     println!();
 
 }
+```
+
+## 3. Hash Map
+
+与其同语言相似，Hash map是必不可少的一种重要数据结构，与 python中的dict， go中的map 一样都是用于进行`<key, value>`对存储的。与vector不同，HashMap可以使用任意类型的数据作为键值，而不是仅可以使用`usize`。由于HashMap不是那么常用的类型，所以没有将其放入`preclude`包中。需要使用时，需要进行显式引入。
+
+Hash map对于基本类型等实现了`Copy`trait的类型，其值可以拷贝进map，但是对于具有所有权的类型，将其加入map，会发生 move 操作，所有权转移到map中去。	
+
+### 3.1 创建HashMap
+
++ `HashMap::new()`
+
+  ```rust
+  use std::collections::HashMap;
+  
+  let mut scores = HashMap::new();
+  
+  scores.insert(String::from("Blue"), 10);
+  scores.insert(String::from("Yellow"), 50);
+  ```
+
++ 从 vector 元组进行创建
+
+  ```rust
+  use std::collections::HashMap;
+  
+  let teams  = vec![String::from("Blue"), String::from("Yellow")];
+  let initial_scores = vec![10, 50];
+  
+  let scores: HashMap<_, _> = teams.iter().zip(initial_scores.iter()).collect()
+  ```
+
+  可以借助元组vector的`collect`方法，其中每个元组包含一个键值对。可以使用`zip（）`方法构建一个元组的vector。这里的`HashMap<_, _>`类型注释是必要的，因为集合类型可能有很多数据结构，需要显式注明。
+
+### 3.2 访问 hash map中的值
+
+可以通过`get()`方法，提供键值获取对应的value。得到的是`Options<T>`类型。可以使用for 循环对于map进行遍历：
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Yellow"), 50);
+
+for (key, value) in &scores {
+    println!("{}: {}", key, value);
+}
+```
+
+### 3.3 更新 hash map
+
+可以使用已经存在的键值，赋予新值，覆盖原值。调用`insert`进行更新。可以使用`entry()`方法返回一个枚举类型，只在键值没有被使用时才可以插入。
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+scores.insert(String::from("Blue"), 10);
+
+scores.entry(String::from("Yellow")).or_insert(50);
+scores.entry(String::from("Blue")).or_insert(50);
+
+println!("{:?}", scores);
 ```
 
