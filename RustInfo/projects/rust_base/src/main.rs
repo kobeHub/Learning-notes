@@ -228,7 +228,7 @@ fn main() {
     {
         println!("\nThe vector part:");
        //mod collect;
-        use crate::collect::{string, vector, hashmap};
+        use crate::collect::{string, vector, hashmap, solution};
         vector::test_vec();
         let v1 = vec![12, 23, 55];
         let mut v2 = vec![12, 55, 7];
@@ -248,5 +248,27 @@ fn main() {
         let text = "It's just a test and test again for usage";
         hashmap::count_words(text);
 
+
+        let mut data = vec![12, 55, 67, 1, 0, 88, 9];
+        println!("Get the feature of the array: {:?}", data);
+        let (mean, middle, mode) = solution::number_feature(&mut data);
+        println!("The mean:{}, middle number:{}, mode number:{}",
+                 mean, middle, mode);
+        let word1 = "apple";
+        let word2 = "translate";
+        let re1 = solution::big_latin(&word1);
+        let re2 = solution::big_latin(&word2);
+        println!("Translate {}, {} to big latin: {}, {}",
+                 word1, word2, re1, re2);
+        use std::collections::HashMap;
+
+        let mut records = HashMap::new();
+        let mut vec = vec![String::from("Leborn"), String::from("Kobe")];
+        records.insert(String::from("base"), &mut vec);
+        println!("Before insert: {:?}", records);
+        let emp1 = "Jack Milocvi".to_string();
+        let part = "sail".to_string();
+        solution::employee_simu(&emp1, &part, &mut records);
+        println!("After insert:{:?}", records);
     }
 }
