@@ -1,0 +1,11 @@
+[package]
+name = "handle"
+version = "0.1.0"
+authors = ["Inno Jia <jdgets111@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+[profile.release]
+panic = 'abort'
+
