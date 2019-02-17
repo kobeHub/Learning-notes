@@ -16,7 +16,10 @@ fn get_file(filename: &str) -> String {
         },
     };
     let mut contents = String::new();    // Pay atten: read_to_string is a method of &mut File
-    let _ = f.read_to_string(&mut contents);
+    match f.read_to_string(&mut contents) {
+        Ok(_) => (),
+        Err(error) => panic!("Read file error:{:?}", error),
+    };
     contents
 }
 
