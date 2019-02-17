@@ -249,7 +249,7 @@ fn main() {
         hashmap::count_words(text);
 
 
-        let mut data = vec![12, 55, 67, 1, 0, 88, 9];
+        let mut data = vec![12, 55, 67, 1, 0, 88, 9, 9];
         println!("Get the feature of the array: {:?}", data);
         let (mean, middle, mode) = solution::number_feature(&mut data);
         println!("The mean:{}, middle number:{}, mode number:{}",
@@ -262,13 +262,14 @@ fn main() {
                  word1, word2, re1, re2);
         use std::collections::HashMap;
 
+        /*
         let mut records = HashMap::new();
-        let mut vec = vec![String::from("Leborn"), String::from("Kobe")];
+        let mut vec = vec!["Leborn", "Kobe"];
         records.insert(String::from("base"), &mut vec);
         println!("Before insert: {:?}", records);
-        let emp1 = "Jack Milocvi".to_string();
-        let part = "sail".to_string();
-        solution::employee_simu(&emp1, &part, &mut records);
-        println!("After insert:{:?}", records);
+        let emp1 = "Jack Milocvi";
+        let part = "sail";
+        solution::employee_simu(emp1, part, &mut records);
+        println!("After insert:{:?}", records);*/
     }
 }

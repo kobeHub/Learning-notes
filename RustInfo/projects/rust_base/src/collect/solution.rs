@@ -5,8 +5,9 @@ use std::collections::HashMap;
 pub fn number_feature(data: &mut Vec<i32>) -> (f64, i32, i32) {
     let mut sum = 0;
     let mut times = HashMap::new();
-    for i in data {
-        sum += *i;
+    let data1 = data.clone();
+    for i in data1 {
+        sum += i;
         let time = times.entry(i).or_insert(0);
         *time +=  1;
     }
@@ -18,7 +19,7 @@ pub fn number_feature(data: &mut Vec<i32>) -> (f64, i32, i32) {
     for (k, v) in times {
         if v > max {
             max = v;
-            mode = *k;
+            mode = k;
         }
     }
     (mean, middle, mode)
@@ -34,15 +35,15 @@ pub fn big_latin(word: &str) -> String {
 
     for i in VOWEL.iter() {
         if first == Some(*i) {
-            return String::from(&word[1..]) + &word[0..0] + "ay";
+            return String::from(&word[1..]) + &word[0..0] + "-ay";
         }
     }
     return format!("{}-hay", word);
 }
 
-
-pub fn employee_simu(employee: &String, depart: &String, records: &mut HashMap<String, &mut Vec<String>>) {
+/*
+pub fn employee_simu(employee: &str, depart: &str, records: &mut HashMap<String, &mut Vec<&str> >) {
     if let Some(v) = records.get(depart) {
-        v.push(*employee);
+        v.push(employee);
     }
-}
+}*/
