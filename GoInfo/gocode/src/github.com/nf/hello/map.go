@@ -55,6 +55,16 @@ func equal(a, b map[string]int) bool {
   return true
 }
 
+func test_none() {
+  con := make(map[int]string, 3)
+  for i := 0; i< 3; i++ {
+    con[i] = ""
+  }
+  for _, v := range con {
+    fmt.Println(v)
+  }
+}
+
 func main() {
   map_test()
   a := map[string]int {
@@ -72,4 +82,5 @@ func main() {
   no := make(map[complex128]int)
   fmt.Println(no, no == nil, len(no))
 
+  test_none()
 }
