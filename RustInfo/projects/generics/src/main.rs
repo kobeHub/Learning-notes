@@ -24,4 +24,13 @@ fn main() {
         let fpoint = Point{x: 3.0, y: 4.0};
         println!("vector {:?} length: {}", fpoint, fpoint.distance_from_origin());
     }
+
+    {
+        use crate::generics::traits;
+
+        let numbers = vec![12.0, 8.0, 5.5, 88., 99.1];
+        let chars = vec!['a', '+', '[', 's'];
+        let total = traits::total_length(&numbers, &chars);
+        println!("The total length {}", total);
+    }
 }
