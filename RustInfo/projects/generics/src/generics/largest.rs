@@ -13,3 +13,12 @@ pub fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
     }
     largest
 }
+
+// Use a lifttime annotions to get longest str
+pub fn str_longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}

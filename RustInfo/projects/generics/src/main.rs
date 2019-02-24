@@ -13,6 +13,17 @@ fn main() {
         let result = largest::largest(&char_list);
         println!("The char list:{:?}, largest one:{}", char_list, result);
 
+        let x = "Just a str literal";
+        let y = "Another thing";
+        println!("str:{}, {}, longest:{}", x, y, largest::str_longest(x, y));
+
+        let result;
+        let str1 = String::from("A long string");
+        {
+            let short = "live long enough, it's amazing";
+            result = largest::str_longest(str1.as_str(), short);
+        }
+        println!("&str lives long enough to a borrow, {}", result);
     }
 
     {
