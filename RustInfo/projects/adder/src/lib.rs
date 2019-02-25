@@ -83,6 +83,10 @@ pub mod shapes {
     }
 }
 
+pub fn add_two(i: i32) -> i32 {
+    i + 2
+}
+
 pub mod msg {
     pub fn greeting(name: &str) -> String {
         format!("Hello, {}", name)
