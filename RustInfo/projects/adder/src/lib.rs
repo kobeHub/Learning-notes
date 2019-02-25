@@ -9,7 +9,7 @@ mod tests {
 
     #[test]
     fn return_result() -> Result<(), String> {
-        if 2 + 2 == 3 {
+        if 2 + 2 == 4 {
             Ok(())
         } else {
             Err(String::from("two add two does not equal three"))
@@ -38,7 +38,7 @@ mod tests {
     fn greeting_not_done() {
         let result = msg::greeting("Cargo");
         assert!(
-            result.contains("Cargoo"),
+            result.contains("Cargo"),
             "Greeting did not contain the name value:{}", result    
         );
     }
