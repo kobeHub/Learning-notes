@@ -151,3 +151,84 @@ mod tests {
 ```
 
 这里我们将 `it_works` 改为返回 Result。同时在函数体中，在成功时返回 `Ok(())` 而不是 `assert_eq!`，而失败时返回带有 `String` 的 `Err`。跟之前一样，这个测试可能成功或失败，不过不再通过 panic，可以通过 `Result<T, E>` 来判断结果。为此不能在对这些函数使用 `#[should_panic]`；而是应该返回 `Err`！  
+
+## 2. 测试控制
+
+`cargo test`命令会生成可执行的二进制文件，默认进行的是并行测试，并且截获所有的输出，阻止其输出到console，从而获得更为清晰地测试结果。可以将一部分命令行参数传递给`cargo test`，而另一部分传递给生成的二进制文件，先列出`cargo test`的参数，然后是二进制文件参数。
+
+### 2.1 并行或者串行执行测试
+
+并执行测试时必须保证测试程序间不会生竞争条件，所以测试间不可以相互依赖，或者依赖共享的状态。依赖共享的环境。为了避免测试相互干扰，可以指定单线程运行：
+
+```shell
+cargo test -- -- test-thread=1 
+```
+
+### 2.2 显示函数输出
+
+```shell
+cargo test -- -- nocapture
+```
+
+### 2.3 运行单个测试
+
+```rust
+cargo test func_name
+```
+
+可以通过指定一个测试函数或者测试模块，运行一部分测试，节省测试时间。这种方式称为`filter`
+
+### 2.4 忽略某些测试
+
+对于一些较为耗时的测试，可以添加`#[ignore]`属性注释进行忽略，从而加快测试进度。
+
+## 3. 测试的组织结构
+
+本章一开始就提到，测试是一个复杂的概念，而且不同的开发者也采用不同的技术和组织。Rust 社区倾向于根据测试的两个主要分类来考虑问题：**单元测试**（*unit tests*）与 **集成测试**（*integration tests*）。单元测试倾向于更小而更集中，在隔离的环境中一次测试一个模块，或者是测试私有接口。而集成测试对于你的库来说则完全是外部的。它们与其他外部代码一样，通过相同的方式使用你的代码，只测试公有接口而且每个测试都有可能会测试多个模块。
+
+为了保证你的库能够按照你的预期运行，从独立和整体的角度编写这两类测试都是非常重要的。
+
+### 3.1 单元测试
+
+单元测试的主要目的是在与其他部分隔离的环境中进行代码的测试。以便于快速而准确地确定某个部分的代码是否符合预期。单元测试与需要测试的代码都存放在`src`目录下，规范是包含测试函数的`tests`模块，需要使用`#cfg(test)`属性标注。
+
+通过使用`#cfg(test)`保证了测试代码只在`cargo test`时才编译运行，在`cargo build`时不需要这么做。可以在构建库时节省时间。同时由于单元测试代码和库文件在同一个文件夹中，所以需要这个属性进行标示，指定他们不可以包含在库文件中。
+
+### 3.2 集成测试
+
+在 Rust 中，集成测试对于所需要测试的库是完全外部的。同其他使用库的代码一样使用库文件，也就是说只可以调用库中的`pub`API。集成测试的目的是为了保证多个部分是否可以协同工作。集成测试在`tests`文件夹内进行。
+
+`tests`目录与`scr`目录同级，不需要加`#cfg(test)`属性 `tests` 文件夹在 Cargo 中是一个特殊的文件夹， Cargo 只会在运行 `cargo test` 时编译这个目录中的文件。
+
+```shell
+  Compiling adder v0.1.0 (/home/inno/Learning-notes/RustInfo/projects/adder)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.23s
+     Running target/debug/deps/adder-70257eb04d3ac84f
+
+running 7 tests
+test tests::greeting_not_done ... ok
+test tests::it_works ... ok
+test tests::rectangle_large_can_hold_small ... ok
+test tests::rectangle_small_can_not_hold_large ... ok
+test tests::length_negative ... ok
+test tests::return_result ... ok
+test tests::width_negative ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+     Running target/debug/deps/integration_test-b8e9d862b2a5bae4
+
+running 1 test
+test it_adds_two ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+   Doc-tests adder
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+```
+
+现在有了三个部分的输出：单元测试、集成测试和文档测试。仍然可以通过指定测试函数的名称作为 `cargo test` 的参数来运行特定集成测试。也可以使用 `cargo test` 的 `--test` 后跟文件的名称来运行某个特定集成测试文件中的所有测试：
