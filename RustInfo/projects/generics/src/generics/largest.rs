@@ -22,3 +22,16 @@ pub fn str_longest<'a>(x: &'a str, y: &'a str) -> &'a str {
         y
     }
 }
+
+//function woth a lifttime ignore
+pub fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i]
+        }
+    }
+
+    &s[..]
+}

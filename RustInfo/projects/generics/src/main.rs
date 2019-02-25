@@ -24,6 +24,10 @@ fn main() {
             result = largest::str_longest(str1.as_str(), short);
         }
         println!("&str lives long enough to a borrow, {}", result);
+
+        println!("Now try to find the first world of a sentence:");
+        let sentence = "JUst a sentence";
+        println!("{}, and first world {}", sentence, largest::first_word(sentence));
     }
 
     {
@@ -43,5 +47,29 @@ fn main() {
         let chars = vec!['a', '+', '[', 's'];
         let total = traits::total_length(&numbers, &chars);
         println!("The total length {}", total);
+        println!("The longer str: {}", traits::longest_with_anno("A long str", "as", "Let's go deep into rust"));
+    }
+
+    {
+        use crate::generics::exception::ImportantExcept;
+        println!();
+        let novel = String::from("It's an ancient story;I will tell u in detail");
+        /*let name = novel.split(';')
+            .next()
+            .expect("Couldn't find a ;");
+        
+        let con = novel.split(';')
+            .next()
+            .expect("Could not find a ;");*/
+        let contents: Vec<_> = novel.split(';')
+            .collect();
+        let i = ImportantExcept{
+            name: contents[0],
+            except: contents[1],
+        };
+        println!("Got an exception:{:#?}", i);
+        println!("The level of the exception: {}", i.level());
+        println!("The except message: {}", i.except_and_announce("!!Caution!!"));
+
     }
 }
