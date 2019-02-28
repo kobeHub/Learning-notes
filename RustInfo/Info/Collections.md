@@ -301,6 +301,15 @@ Hash map对于基本类型等实现了`Copy`trait的类型，其值可以拷贝�
 ```rust
 use std::collections::HashMap;
 
+let mut map = HashMap::new();
+map.insert(1, "a");
+assert_eq!(map.get(&1), Some(&"a"));
+assert_eq!(map.get(&2), None);
+```
+
+```rust
+use std::collections::HashMap;
+
 let mut scores = HashMap::new();
 
 scores.insert(String::from("Blue"), 10);
