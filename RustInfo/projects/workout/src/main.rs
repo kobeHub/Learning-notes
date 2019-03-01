@@ -1,4 +1,6 @@
 use workout::generate;
+// use workout::iterator_test::{self, Pair};
+
 
 fn main() {
     let simulated_user_specified_value = 10;
@@ -7,6 +9,9 @@ fn main() {
     generate::generate_work_out(simulated_user_specified_value, simulated_random_num);
     //process_long::
     move_to_clouster();
+
+    //let test = (0..10); std::ops::Range
+    //let () = test;
 }
 
 fn move_to_clouster() {

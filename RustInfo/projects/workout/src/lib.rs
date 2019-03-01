@@ -101,3 +101,132 @@ pub mod process_long {
 
     }
 }*/
+
+#[cfg(test)]
+mod test {
+    use super::iterator_test::{self, Shoe, Pair, Counter};
+    #[test]
+    fn file_shoes_in_my_size() {
+        let shoes = vec![
+            Shoe {size: 12, style: String::from("sneaker")},
+            Shoe {size: 11, style: String::from("boot")},
+            Shoe {size: 11, style: String::from("sandl")},
+        ];
+
+        let shoes_in_my_size = iterator_test::shoes_in_my_size(shoes, 11);
+        assert_eq!(
+            shoes_in_my_size,
+            vec![
+                Shoe {size: 11, style: String::from("boot")},
+                Shoe {size: 11, style: String::from("sandl")},
+            ]
+        );
+    }
+
+    #[test]
+    fn pair_lifetime() {
+        let mut p1 = Pair::new(1288889, "Leborn James", 0);
+        assert_eq!(p1.name(), "Leborn James");
+        assert_eq!(p1.id(), 1288889);
+    
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
+        assert_eq!(p1.next(), None);    
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 2)));    
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 3)));    
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 4)));    
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 5)));    
+        //assert_eq!(p1.next(), None);    
+    }
+
+    #[test]
+    fn use_other_of_iterator() {
+        let sum: u32 = Counter::new().zip(Counter::new().skip(1))
+            .map(|(a, b)| a * b)
+            .filter(|x| x % 3 == 0)
+            .sum();
+        assert_eq!(18, sum);
+    }
+}
+
+pub mod iterator_test {
+    #[derive(PartialEq, Debug)]
+    pub struct Shoe {
+        pub size: u32,
+        pub style: String,
+    }
+
+    // filter my size shoes in the given Vec
+    pub fn shoes_in_my_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
+        shoes.into_iter()
+            .filter(|s| s.size == shoe_size)  // get varaible from the environment
+            .collect()
+    }
+
+    /* Define the personal type to impl the Iterator trait */
+    #[derive(PartialEq, Debug)]
+    pub struct Pair<'a> {
+        id: u32,
+        name: &'a str,
+        count: u8,
+    }
+
+    /* The basic function for the Pair */
+    impl<'a> Pair<'a> {
+        pub fn new(id: u32, name: &'a str, count: u8) -> Pair {
+            Pair {id, name, count}
+        }
+
+        pub fn name(&self) -> &str {
+            self.name
+        }
+
+        pub fn id(&self) -> u32 {
+            self.id
+        }
+    }
+
+    impl<'a> Iterator for Pair<'a> {
+        type Item = (u32, &'a str);    // Define the `next()` method return type
+
+        // Use the method of the `Iterator` trait to get the 
+        // element tuple for six times
+        fn next(&mut self) -> Option<Self::Item> {
+            self.count += 1;
+
+            if self.count < 6 {
+                Some((self.id, self.name))
+            } else {
+                None
+            }
+        }
+    }
+
+    #[derive(PartialEq, Debug)]
+    pub struct Counter {
+        count: u32
+    }
+
+    impl Counter {
+        pub fn new() -> Counter {
+            Counter {count: 0}
+        }
+    }
+
+    impl Iterator for Counter {
+        type Item = u32;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            self.count += 1;
+
+            if self.count < 6 {
+                Some(self.count)
+            } else {
+                None
+            }
+        }
+    }
+}
