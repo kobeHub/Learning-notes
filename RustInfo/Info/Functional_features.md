@@ -209,3 +209,182 @@ fn main() {
 当创建一个闭包时，Rust 根据其如何使用环境中变量来推断我们希望如何引用环境。由于所有闭包都可以被调用至少一次，所以所有闭包都实现了 `FnOnce` 。那些并没有移动被捕获变量的所有权到闭包内的闭包也实现了 `FnMut` ，而不需要对被捕获的变量进行可变访问的闭包则也实现了 `Fn` 。 在示例 13-12 中，`equal_to_x` 闭包不可变的借用了 `x`（所以 `equal_to_x` 具有 `Fn` trait），因为闭包体只需要读取 `x` 的值。
 
 如果你希望强制闭包获取其使用的环境值的所有权，可以在参数列表前使用 `move` 关键字。**这个技巧在将闭包传递给新线程以便将数据移动到新线程中时最为实用**。
+
+## 3. 迭代器
+
+Iterator 负责遍历序列中的每一项并决定序列何时结束的逻辑，当时用迭代器时，我们无需重新实现这些逻辑。在 Rust 中，迭代器是**惰性的**（*lazy*），这意味着在调用方法使用迭代器之前它都不会有效果。所以对于一个迭代器对象而言，必须使用一个对应的消耗（**Consume**）方法，才可以对其中的数据进行操作。
+
+```rust
+let v1 = vec![1, 2, 3];
+
+let v1_iter = v1.iter();
+
+for val in v1_iter {
+    println!("Got: {}", val);
+}
+```
+
+### 3.1 `Iterator` trait and `next` method
+
+迭代器都实现了一个叫做`Iterator` 的trait，它的定义使用了关联类型`Self::Item`, `type Item`.要求实现该trait的同时需要指定一个`Item` 类型，作为`next`方法的返回值。`next`方法是唯一要求被实现的方法，每次返回一个`Some（Item）`, 如果迭代器被消耗完毕，则返回一个None。
+
+**需要注意的是，使用`next`方法返回的是一个不可变引用。**`iter()`方法返回的是一个不可变引用的迭代器，如果需要返回一个获取`v1`所有权，并返回拥有所有权的迭代器，可以使用`into_iter()`方法。`iter_mut()`迭代可变引用。
+
+```rust
+#[test]
+fn iterator_demonstration() {
+    let v1 = vec![1, 2, 3];
+
+    let mut v1_iter = v1.iter();
+
+    assert_eq!(v1_iter.next(), Some(&1));
+    assert_eq!(v1_iter.next(), Some(&2));
+    assert_eq!(v1_iter.next(), Some(&3));
+    assert_eq!(v1_iter.next(), None);
+}
+```
+
+`Iterator` trait 有一系列不同的由标准库提供默认实现的方法；一些方法在其定义中调用了 `next` 方法，这也就是为什么在实现 `Iterator` trait 时要求实现 `next` 方法的原因。这些调用 `next` 方法的方法被称为 **消费适配器**（*consuming adaptors*），因为调用他们会消耗迭代器。
+
++ `fn size_hint(&self) -> (usize, Option<Usize>)`:
+
+  确定一个迭代器的元素的数量的范围，返回一个元组，第一个数据是下界，第二个是上界，由于可能溢出，所以使用Option
+
+  ```rust
+  // The even numbers from zero to ten.
+  let iter = (0..10).filter(|x| x % 2 == 0);
+  
+  // We might iterate from zero to ten times. Knowing that it's five
+  // exactly wouldn't be possible without executing filter().
+  assert_eq!((0, Some(10)), iter.size_hint());
+  
+  // Let's add five more numbers with chain()
+  let iter = (0..10).filter(|x| x % 2 == 0).chain(15..20);
+  
+  // now both bounds are increased by five
+  assert_eq!((5, Some(15)), iter.size_hint());
+  ```
+
++ `fn count(&self) -> usize`
+
+  消耗迭代器，计算元素的数量，一直调用`next`直到返回一个None。使用后该迭代器失效。
+
++ `fn last(&self) -> Option<Self::Item>`
+
+  消耗迭代器，返回最后一个元素。
+
++ `fn nth(&self， n: usize) -> Option<Self::Item>`
+
+  消耗迭代器，直到取到下标为n的元素，然后其前面的元素都无法使用。
+
++ `fn chain<U>(&self, other: U) -> Chain<Self, <U as IntoIterator>::IntoIter> where
+      U: [IntoIterator](https://doc.rust-lang.org/std/iter/trait.IntoIterator.html)<Item = Self::[Item](https://doc.rust-lang.org/std/iter/trait.Iterator.html#associatedtype.Item)>,
+
+  将两个迭代器连接在一起。形成一个迭代器。
+
++ `fn zip<U>(self, other: U) -> Zip<Self, <U as IntoIterator>::IntoIter> where U: IntoIterator`
+
+  将两个迭代器的元素打包为一个迭代器的元素对。
+
+  ```rust
+  let s1 = &[1, 2, 3];
+  let s2 = &[4, 5, 6];
+  
+  let mut iter = s1.iter().zip(s2);
+  
+  assert_eq!(iter.next(), Some((&1, &4)));
+  assert_eq!(iter.next(), Some((&2, &5)));
+  assert_eq!(iter.next(), Some((&3, &6)));
+  assert_eq!(iter.next(), None);
+  ```
+
++ `fn map(self, f: F)`
+
+  使用一个闭包，并且对于迭代器中的每一个元素调用该闭包。
+
+  ```rust
+  let a = [1, 2, 3];
+  
+  let mut iter = a.into_iter().map(|x| 2 * x);
+  
+  assert_eq!(iter.next(), Some(2));
+  assert_eq!(iter.next(), Some(4));
+  assert_eq!(iter.next(), Some(6));
+  assert_eq!(iter.next(), None);
+  ```
+
++ `fn filter(self, presicate: P) `
+
+  创建一个迭代器，通过使用一个闭包，将所有可以使得闭包返回 true 的元素取出（move），创建一个新的迭代器。
+
+### 3.2 产生不同迭代器的方法
+
+可以使用`Iterator` trait 中的迭代器适配器，将当前的迭代器变为不同类型的迭代器，并且允许使用连式法则调用。
+
+```rust
+let v1: Vec<i32> = vec![1, 2, 3];
+
+let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
+
+assert_eq!(v2, vec![2, 3, 4]);
+```
+
+```rust
+    #[test]
+    fn use_other_of_iterator() {
+        let sum: u32 = Counter::new().zip(Counter::new().skip(1))
+            .map(|(a, b)| a * b)
+            .filter(|x| x % 3 == 0)
+            .sum();
+        assert_eq!(18, sum);
+    }
+
+```
+
+### 3.3 自定义类型的迭代器
+
+可以实现 `Iterator` trait 来创建任何我们希望的迭代器。正如之前提到的，定义中唯一要求提供的方法就是 `next` 方法。一旦定义了它，就可以使用所有其他由 `Iterator`trait 提供的拥有默认实现的方法来创建自定义迭代器了！
+
+```rust
+    /* Define the personal type to impl the Iterator trait */
+    #[derive(PartialEq, Debug)]
+    pub struct Pair<'a> {
+        id: u32,
+        name: &'a str,
+        count: u8,
+    }
+
+    /* The basic function for the Pair */
+    impl<'a> Pair<'a> {
+        pub fn new(id: u32, name: &'a str, count: u8) -> Pair {
+            Pair {id, name, count}
+        }
+
+        pub fn name(&self) -> &str {
+            self.name
+        }
+
+        pub fn id(&self) -> u32 {
+            self.id
+        }
+    }
+
+    impl<'a> Iterator for Pair<'a> {
+        type Item = (u32, &'a str);    // Define the `next()` method return type
+
+        // Use the method of the `Iterator` trait to get the 
+        // element tuple for six times
+        fn next(&mut self) -> Option<Self::Item> {
+            self.count += 1;
+
+            if self.count < 6 {
+                Some((self.id, self.name))
+            } else {
+                None
+            }
+        }
+    }
+```
+
+
+
