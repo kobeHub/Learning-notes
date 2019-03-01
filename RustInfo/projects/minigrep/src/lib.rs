@@ -12,8 +12,9 @@ pub struct Config {
    pub case_sensitive: bool,
 }
 
-/*The methods for COnfig struct*/
+/*The methods for Config struct*/
 impl Config {
+    /*********************verion 0.2****************************
     // Return a Result and the Err message's liftime is static
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
@@ -23,6 +24,23 @@ impl Config {
         let filename = args[2].clone();
 
         // Get from environment 
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+        Ok(Config {query, filename, case_sensitive})
+    }
+    ***************************************************************/
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+        args.next();    // Pop the first argument
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't pass a query string"),
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't pass a file"),
+        };
+
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
         Ok(Config {query, filename, case_sensitive})
     }
@@ -54,6 +72,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 /*The search action to get the query from target file*/
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    /*****************version 0.1************************
     // 函数定义中返回值与contens具有相同的生命周期，所以
     // 返回值包含的应该是 contens 的string slice
     let mut result = Vec::new();
@@ -64,10 +83,15 @@ fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     }
 
     result
+    ****************************************************/
+    contents.lines()
+        .filter(|line| line.contains(&query))
+        .collect()
 } 
 
 /*Search case insentive in the file*/
 fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    /*****************version 0.1******************
     let query = query.to_lowercase();
     let mut result = Vec::new();
 
@@ -78,6 +102,10 @@ fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     }
 
     result
+    ************************************************/
+    contents.lines()
+        .filter(|line| line.to_lowercase().contains(&query.to_lowercase()))
+        .collect()
 }
 
 #[cfg(test)]
