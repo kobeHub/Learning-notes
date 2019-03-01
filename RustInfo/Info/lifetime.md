@@ -120,6 +120,26 @@ fn longest<'a>(x: &'a str, y: &str) -> &'a str {x}
 
 **那么当函数返回一个引用，那么就必须与一个参数的生命周期相匹配，如果不与参数的生命周期匹配，那么就肯定和一个内部成员的生命周期相匹配，这样的引用肯定是无效的。**
 
+```rust
+    impl<'a> Iterator for Pair<'a> {
+        type Item = (u32, &'a str);    // Define the `next()` method return type
+
+        // Use the method of the `Iterator` trait to get the 
+        // element tuple for six times
+        fn next(&mut self) -> Option<Self::Item> {
+            self.count += 1;
+
+            if self.count < 6 {
+                Some((self.id, self.name))
+            } else {
+                None
+            }
+        }
+    }
+```
+
+以上代码使用了一个自定义结构体，并且实现了`Iterator` trait，其中定义了`next()` method 的返回值类型时使用了 tuple 形式，元组中的`&str`同样需要注明生命周期。
+
 ## 4. 结构体使用生命周期
 
 在一个存放引用的结构体中，必须使用生命周期注释，指定一个引用的可用范围。
