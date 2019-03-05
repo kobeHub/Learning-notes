@@ -212,6 +212,12 @@ python 3.4中内置了 asychio库，在python 3.5 中使用了`asych`, `await`�
 
 ### 5.2 `async`, `await`基于协程的异步调用 
 
+```python
+async def func(param1, param2):
+    do_stuff()
+    await some_coroutine()
+```
+
 对于一个基本的异步函数，可以使用关键字`async`定义一个异步函数，直接调用一个异步函数，不会执行相应的结果而是返回一个`coroutine`对象。称之为`Navie coroutine`，除此之外，还可以使用装饰器`types.coroutine`,`asycnio.coroutine`获得一个navie coroutine。**注意对于`await`操作只可以等待一个naive coroutine**
 
 对于一个异步函数的调用可以使用`send(None)`进行唤醒，因为其本质是一个generator：
@@ -347,3 +353,109 @@ class ThreeTwoOne:
 ```
 
 完成异步的代码不一定要用async/await，使用了async/await的代码也不一定能做到异步，async/await是协程的语法糖，使协程之间的调用变得更加清晰，使用async修饰的函数调用时会返回一个协程对象，await只能放在async修饰的函数里面使用，await后面必须要跟着一个协程对象或Awaitable，await的目的是等待协程控制流的返回，而实现暂停并挂起函数的操作是yield。
+
+## 6.装饰器
+
+装饰器可以用于函数定义或者方法定义，也可以用于类的定义，可以使用多个装饰器对于一个方法或者类进行修饰，装饰器需要定义一个`wrapper()`函数,将一个需要被包含的函数传入装饰器，不需要传入`wrapper()`方法。对于装饰器需要的参数，在装饰器中传入。
+
+```pyhton
+@foo(arg)
+@a
+def fun(a1)
+foo(arg)(a(fun(a1)))
+```
+
+```python
+def use_logging(func):
+
+    def wrapper():
+        logging.warning(f"{func.__name__} is running")
+        return func()
+    return wrapper
+
+@time_eval
+@use_logging
+def foo():
+    print("i am foo")
+
+foo()
+```
+
+常用的装饰器主要有：
+
++ property: 将一个方法变为属性进行调用
++ method_name.setter: 将一个设置属性值的函数以属性的方式调用
++ staticmethod： 静态方法，不需要 self， cls参数
++ classmethod： 不需要self参数，需要cls参数
+
+## 7. 类型标注
+
+`typing`模块以暂定状态包含在标准库中。基本变量的类型注释可以使用`:`操作符，返回值`->`，与Rust相同。一些基本类型：
+
+>from typing import List, Dict, Tuple, Squence
+
+```python
+from typing import List
+Vector = List[float]
+
+def scale(scalar: float, vector: Vector) -> Vector:
+    return [scalar * num for num in vector]
+
+# typechecks; a list of floats qualifies as a Vector.
+new_vector = scale(2.0, [1.0, -4.2, 5.4])
+```
+
+### 7.1 NewType
+
+可以借助函数`typing.NewType`创建不同的新类型，静态类型检查器会将新类型视为原始类型的子类，对于帮助捕捉逻辑错误十分有用。
+
+```python
+def get_user_name(user_id: UserId) -> str:
+ 
+
+UserId = NewType('UserId', int)
+
+ProUserId = NewType('ProUserId', UserId)
+# typechecks
+user_a = get_user_name(UserId(42351))
+
+# does not typecheck; an int is not a UserId
+user_b = get_user_name(-1)
+```
+
+### 7.2 泛型
+
+由于无法以通用方式静态推断有关保存在容器中的对象的类型信息，因此抽象基类已扩展为支持订阅以表示容器元素的预期类型。
+
+```python
+from typing import Mapping, Sequence
+
+def notify_by_email(employees: Sequence[Employee],
+                    overrides: Mapping[str, str]) -> None: ...
+```
+
+用户可以自定义泛型：[`Generic`](https://docs.python.org/zh-cn/3/library/typing.html#typing.Generic) 每个参数的类型变量必须是不同的
+
+```python
+from typing import TypeVar, Generic
+from logging import Logger
+
+T = TypeVar('T')
+
+class LoggedVar(Generic[T]):
+    def __init__(self, value: T, name: str, logger: Logger) -> None:
+        self.name = name
+        self.logger = logger
+        self.value = value
+
+    def set(self, new: T) -> None:
+        self.log('Set ' + repr(self.value))
+        self.value = new
+
+    def get(self) -> T:
+        self.log('Get ' + repr(self.value))
+        return self.value
+
+    def log(self, message: str) -> None:
+        self.logger.info('%s: %s', self.name, message)
+```
