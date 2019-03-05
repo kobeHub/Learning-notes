@@ -192,6 +192,8 @@ sum(x**2 for x in my_list)
 
 ## 5.异步
 
+### 5.1 协程
+
 由于GIL的存在，导致python的多线程性能甚至比单线程还慢。
 
 > GIL: 全局解释器锁（英语：Global Interpreter Lock，缩写GIL），是计算机程序设计语言解释器用于同步线程的一种机制，它使得任何时刻仅有一个线程在执行。[1]即便在多核心处理器上，使用 GIL 的解释器也只允许同一时间执行一个线程。
@@ -206,4 +208,142 @@ python 3.4中内置了 asychio库，在python 3.5 中使用了`asych`, `await`�
 + `send(arg)`:把一个参数送入生成器
 + `next()`获取生成器的下一个元素
 
-对于启动或者恢复一个生成器的执行，可以使用三方式：`next(), __next__(), g.send(None)` 
+对于启动或者恢复一个生成器的执行，可以使用三方式：`next(), __next__(), g.send(None)`
+
+### 5.2 `async`, `await`基于协程的异步调用 
+
+对于一个基本的异步函数，可以使用关键字`async`定义一个异步函数，直接调用一个异步函数，不会执行相应的结果而是返回一个`coroutine`对象。称之为`Navie coroutine`，除此之外，还可以使用装饰器`types.coroutine`,`asycnio.coroutine`获得一个navie coroutine。**注意对于`await`操作只可以等待一个naive coroutine**
+
+对于一个异步函数的调用可以使用`send(None)`进行唤醒，因为其本质是一个generator：
+
+```python
+print(async_function().send(None))
+
+StopIteration: 1
+```
+
+但是这样的直接调用会造成一个停止迭代的异常，可以定义一个如下的函数进行异常处理：（或者直接使用`asyncio.run()`）
+
+```python
+def run(coroutine):
+    try:
+        coroutine.send(None)
+    except StopIteration as e:
+        return e.value
+```
+
+在一个协程函数中，使用`await`关键字将自身挂起，并且等待其后的协程，等待其指向的协程结束后继续执行。`await`等待的协程对象必须是一个`Awaitable`的子类，只需要实现了`__await__`方法即可,主要有以下三种`Awaitable`, coroutine, Tasks, Futures。
+
+```python
+class Awaitable(metaclass=ABCMeta):
+    __slots__ = ()
+
+    @abstractmethod
+    def __await__(self):
+        yield
+
+    @classmethod
+    def __subclasshook__(cls, C):
+        if cls is Awaitable:
+            return _check_methods(C, "__await__")
+        return NotImplemented
+```
+
+而且可以看到，Coroutine类也继承了Awaitable，而且实现了send，throw和close方法。所以await一个调用异步函数返回的协程对象是合法的。
+
+```python
+class Coroutine(Awaitable):
+    __slots__ = ()
+
+    @abstractmethod
+    def send(self, value):
+        ...
+
+    @abstractmethod
+    def throw(self, typ, val=None, tb=None):
+        ...
+
+    def close(self):
+        ...
+        
+    @classmethod
+    def __subclasshook__(cls, C):
+        if cls is Coroutine:
+            return _check_methods(C, '__await__', 'send', 'throw', 'close')
+        return NotImplemented
+```
+
+使用`event_loop`执行coroutines
+
+```python
+loop = asyncio.get_event_loop()
+res = loop.run_until_complete(asyncio.wait([buy_potatos(), buy_tomatos()]))
+loop.close()
+```
+
+### 5.3 couroutine 高级API
+
+**Aeaitable**：
+
++ coroutine：可以指向两个相似的概念，协程函数（sync def）以及协程对象(由调用一个协程函数得到的对象)
++ Tasks： 用以调控协程并发执行，可以使用一个`asycnio.create_task()`函数将一个协程包装为一个Task对象并且自动按顺序执行
++ Futures： 低层API
++ `asyncio.creat_task(coro)`:
+  创建一个Task并且调度其执行
++ `asyncio.sleep（ delay, result=None, *, loop=None）`:
+  阻塞调用一定时间,如果给定了result，那么当该协程执行结束后将result返回给调用者。使用该操作可以挂起当前协程让其他协程获得cpu时间
+
+**并发执行程序：**
+
++ `asyncio.gather(*aws, loop=None, return_exceptions=None)`
+
+  序列化执行`aws`中的Awaitable 对象，如果其中的任何一个为coroutine，那么自动转换为Task对象，如果所有的Awaitable对象都成功执行，那么返回一个于输入参数对应的返回值列表。如果gather被取消了，那么所有的提交的 Awaitable 都会被取消执行，但是其中的一个协程或者Future取消执行并不影响其他的 Awaitables。
+
+### 5.4 异步生成器
+
+看下AsyncGenerator的定义，它需要实现__aiter__和__anext__两个核心方法，以及asend，athrow，aclose方法。
+
+```python
+class AsyncGenerator(AsyncIterator):
+    __slots__ = ()
+
+    async def __anext__(self):
+        ...
+
+    @abstractmethod
+    async def asend(self, value):
+        ...
+
+    @abstractmethod
+    async def athrow(self, typ, val=None, tb=None):
+        ...
+
+    async def aclose(self):
+        ...
+
+    @classmethod
+    def __subclasshook__(cls, C):
+        if cls is AsyncGenerator:
+            return _check_methods(C, '__aiter__', '__anext__',
+                                  'asend', 'athrow', 'aclose')
+        return NotImplemented
+```
+
+### 5.5 异步方法
+
+对于类的普通方法或者是类方法都可以使用`async`关键字，将其定义为异步的。
+
+```python
+class ThreeTwoOne:
+    @classmethod
+    async def begin(cls):
+        print(3)
+        await asyncio.sleep(1)
+        print(2)
+        await asyncio.sleep(1)
+        print(1)        
+        await asyncio.sleep(1)
+        return
+```
+
+完成异步的代码不一定要用async/await，使用了async/await的代码也不一定能做到异步，async/await是协程的语法糖，使协程之间的调用变得更加清晰，使用async修饰的函数调用时会返回一个协程对象，await只能放在async修饰的函数里面使用，await后面必须要跟着一个协程对象或Awaitable，await的目的是等待协程控制流的返回，而实现暂停并挂起函数的操作是yield。
