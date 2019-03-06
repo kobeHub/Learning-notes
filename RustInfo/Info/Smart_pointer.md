@@ -211,7 +211,9 @@ fn main() {
 如果希望创建如下的列表：
 ![two-direct](https://doc.rust-lang.org/book/img/trpl15-03.svg)
 
-继续使用`Box<T>`就会发生所有权的错误，因为对于结点a已经发生了move，已经无法再次使用了。如果使用`Rc<T>`实现的迭代列表，就可以满足该需求。当b创建时不获取a的所有权，而是进行克隆a
+继续使用`Box<T>`就会发生所有权的错误，因为对于结点a已经发生了move，已经无法再次使用了。如果使用`Rc<T>`实现的迭代列表，就可以满足该需求。当b创建时不获取a的所有权，而是进行克隆a所包含的`Rc`，并且将引用计数增一。
+
+使用`Rc<T>`是需要使用`use std::rc::Rc;`将其引入作用域，因为没有包含在`prelude`中。注意使用`Rc::clone`与`clone`是有所不同的，不需要对所有的数据进行深拷贝，而是仅仅增加引用计数，所以不会造成性能的下降，所以在**查找程序性能问题的时候不需要考虑`Rc::clone`**
 
 ```rust
 enum List {
@@ -226,5 +228,27 @@ fn main() {
     let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
     let b = Cons(3, Rc::clone(&a));
     let c = Cons(4, Rc::clone(&a));
+}
+```
+
+```rust
+# enum List {
+#     Cons(i32, Rc<List>),
+#     Nil,
+# }
+#
+# use List::{Cons, Nil};
+# use std::rc::Rc;
+#
+fn main() {
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    println!("count after creating a = {}", Rc::strong_count(&a));
+    let b = Cons(3, Rc::clone(&a));
+    println!("count after creating b = {}", Rc::strong_count(&a));
+    {
+        let c = Cons(4, Rc::clone(&a));
+        println!("count after creating c = {}", Rc::strong_count(&a));
+    }
+    println!("count after c goes out of scope = {}", Rc::strong_count(&a));
 }
 ```
