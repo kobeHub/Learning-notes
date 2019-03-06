@@ -183,7 +183,7 @@ fn main() {
 }
 ```
 
-但是不允许显示调用`drop()`method，因为在作用与结束时，会自动调用，为了避免二次释放。为了提早丢弃一个值，可以使用`std::mem::drop`方法。一个例子是当使用智能指针管理锁时；你可能希望强制运行 `drop` 方法来释放锁以便作用域中的其他代码可以获取锁。Rust 并不允许我们主动调用 `Drop` trait 的 `drop` 方法；当我们希望在作用域结束之前就强制释放变量的话，我们应该使用的是由标准库提供的 `std::mem::drop`。`std::mem::drop` 位于 prelude。
+但是不允许显式调用`drop()`method，因为在作用与结束时，会自动调用，为了避免二次释放。为了提早丢弃一个值，可以使用`std::mem::drop`方法。一个例子是当使用智能指针管理锁时；你可能希望强制运行 `drop` 方法来释放锁以便作用域中的其他代码可以获取锁。Rust 并不允许我们主动调用 `Drop` trait 的 `drop` 方法；当我们希望在作用域结束之前就强制释放变量的话，我们应该使用的是由标准库提供的 `std::mem::drop`。`std::mem::drop` 位于 prelude。
 
 ```rust
 # struct CustomSmartPointer {
@@ -204,3 +204,27 @@ fn main() {
 }
 ```
 
+## 5. `Rc<T>`引用计数
+
+大部分的所有权是十分明确的：可以准确得知哪个变量拥有哪个值。然而某些情况单个值可能具有多个所有者。比如图结构中，多条边可能指向同一个结点，而这个结点从概念上讲应该为所有的边所拥有，为了使用多所有权，就需要`Rc<T>`的帮助。即 **Reference Count**。`Rc<T>` 用于当我们希望在堆上分配一些内存供程序的多个部分读取，而且无法在编译时确定程序的那一部分会最后结束使用它的时候
+
+如果希望创建如下的列表：
+![two-direct](https://doc.rust-lang.org/book/img/trpl15-03.svg)
+
+继续使用`Box<T>`就会发生所有权的错误，因为对于结点a已经发生了move，已经无法再次使用了。如果使用`Rc<T>`实现的迭代列表，就可以满足该需求。当b创建时不获取a的所有权，而是进行克隆a
+
+```rust
+enum List {
+    Cons(i32, Rc<List>),
+    Nil,
+}
+
+use List::{Cons, Nil};
+use std::rc::Rc;
+
+fn main() {
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    let b = Cons(3, Rc::clone(&a));
+    let c = Cons(4, Rc::clone(&a));
+}
+```
