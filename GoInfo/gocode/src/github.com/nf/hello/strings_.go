@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "unicode/utf8"
+	"strings"
 )
 
 const sample = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98"
@@ -59,6 +60,10 @@ func sample_test() {
 }
 
 func main() {
+	fmt.Println("String trim")
+	task := "just a test and test"
+	fmt.Println(strings.Trim(strings.Join(strings.Split(task, " "), "-"), "[]"))
+
   string_construct()
   str := "Señor"
   leng_test(str)
