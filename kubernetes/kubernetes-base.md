@@ -69,5 +69,10 @@ k8s提供了基础设施来构建一个真正以**容器为中心**的开发环�
 + **kube-proxy**： 负责为service提供集群内部的服务发现以及负载均衡，维护主机上的网络规则并执行连接转发，实现服务的抽象 
 + **DNS**： 一个DNS服务器，将k8s启动的容器自动包含
 
+----
 
+**Reference:**
+
++ https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/
++ https://kubernetes.io/docs/concepts/overview/components/
 
