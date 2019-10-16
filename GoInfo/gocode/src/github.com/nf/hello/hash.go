@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"crypto/sha256"
 	"fmt"
-	"io"
 	"hash/fnv"
+	"io"
 	"os"
 )
 
@@ -41,7 +41,7 @@ func compare(filePath1, filePath2 string, nums int) []string {
 	}
 	buf1 := bufio.NewReader(f1)
 	buf2 := bufio.NewReader(f2)
-	
+
 	// tmp files to store chunks
 	files1 := make([]*bufio.Writer, nums)
 	files2 := make([]*bufio.Writer, nums)
@@ -57,11 +57,46 @@ func compare(filePath1, filePath2 string, nums int) []string {
 		files1[i] = bufio.NewWriter(tmp1)
 		files2[i] = bufio.NewWriter(tmp2)
 	}
-	processOne(buf1, files1)
-	processOne(buf2, files2)
+	done1 := make(chan bool)
+	done2 := make(chan bool)
+	go processOne(buf1, files1, done1)
+	go processOne(buf2, files2, done2)
+	<-done1
+	<-done2
+
+	// compare each pair files
+	for i := 0; i < nums; i++ {
+		record := make(map[string]int)
+		file1, err := os.Open(fmt.Sprintf("%s/%s", temDir1, i))
+		defer file1.Close()
+		if err != nil {
+			panic(err)
+		}
+		file2, err := os.Open(fmt.Sprintf("%s/%s", tmpDir2, i))
+		defer file2.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		scanner1 := bufio.NewScanner(file1)
+		scanner2 := bufio.NewScanner(file2)
+		for scanner1.Scan() {
+			line := scanner.Text()
+			record[line] = 0
+		}
+		if err = scanner1.Err(); err != nil {
+			panic(err)
+		}
+		for scanner2.Scan() {
+			line := scanner.Text()
+			if _, ok := record[line]; ok {
+				fmt.Println(line)
+			}
+		}
+	}
 }
 
-func processOne(buf *bufio.Reader, files []*bufio.Writer) {
+func processOne(buf *bufio.Reader, files []*bufio.Writer, done chan bool) {
 	lines := 0
 	for {
 		line, err := buf.ReadString('\n')
@@ -73,20 +108,20 @@ func processOne(buf *bufio.Reader, files []*bufio.Writer) {
 		}
 		line = strings.TrimSpace(line)
 		index := hash(line) % 1000
-		lines ++
+		lines++
 		_, err = files[index].WriteString(fmt.Sprintf("%s\n", line))
 		if err != nil {
 			panic(err)
 		}
-		if lines % 10000 == 0 {
+		if lines%10000 == 0 {
 			for item := range files {
 				err := item.Flush()
 				panic(err)
 			}
 		}
 	}
+	done <- true
 }
-
 
 func main() {
 	ori1 := "Just a test, what's the diff"
