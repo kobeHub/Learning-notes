@@ -133,7 +133,7 @@ fn format_print() {
     println!("{:05}", 31);
     println!("{} of {:#b} people know binary, the other do not", 1, 2);
     println!("Padding num with extra 0 {num:0>width$}", num=12, width=5);
-    println!("{:0>7.*} {1}", 3, 1.3216324);
+    println!("{:0>7.*} {1} {0}", 3, 1.3216324);
     println!("{:0>wid$.*} {1}", 3, 3.1415, wid=6);
     println!("{:x<4}", 12);
 }

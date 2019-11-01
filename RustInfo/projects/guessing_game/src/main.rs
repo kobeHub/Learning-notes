@@ -8,12 +8,10 @@ fn main() {
     let secret_num = rand::thread_rng().gen_range(1, 101);
     println!("Just guess the number between 1 and 100!");
 
-
     loop {
         let mut guess = String::new();
         io::stdin().read_line(&mut guess)
-        .expect("[-]Fail to read line!");
-
+            .expect("[-]Fail to read line!");
 
         // Transfer guess from string to i32, rust allow a new
         // variable to be shadow variable
