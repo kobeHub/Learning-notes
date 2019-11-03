@@ -96,7 +96,7 @@ fn immutable_test() {
     }
     println!("]");
 
-    let str3 = if tuple.3 > 8 {
+    let str3 = if tuple.3 > 8i32 {
         "It's greater than 8"
     } else {
         "It's less than 8"
@@ -110,12 +110,28 @@ fn immutable_test() {
             break count * 3 + 1;
         }
     };
-    println!("{}", a);
+    println!("NUm after loop compute {}", a);
 }
 
-fn rev_out() {
-    for i in (1..4).rev() {
-        print!("{}, ", i);
+fn iter_out() {
+    let mut data = [0i32; 5];
+    for i in 0..5 {
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input)
+            .expect("Please input an number.");
+        // println!("{}", input);
+        data[i] = match input.trim().parse() {
+            Ok(n) => {
+                n
+            },
+            Err(error) => {
+                eprintln!("error parse number: {}", error);
+                -1
+            },
+        }
+    }
+    for i in data.iter() {
+        println!("data: {}", i);
     }
     println!("\nDone!");
 }
@@ -124,7 +140,8 @@ fn rev_out() {
 fn format_print() {
     println!("\nFormat print test:");
     let str1 = format!("Just a test with {}", "format!");
-    println!("{}", str1);
+    let str2 = str1.clone();
+    println!("{} {}", str1, str2);
     println!("{one} is {doing} by {two}",
              one="Tim",
              doing="beating",
@@ -140,7 +157,7 @@ fn format_print() {
 
 fn main() {
     immutable_test();
-    rev_out();
+    // iter_out();
     format_print();
 
     {
@@ -158,6 +175,7 @@ fn main() {
         println!("Find first word:{}",
                 slice::first_world(&"Find fiest word!"));
     }
+
 
     println!("\n\n");
 
@@ -220,7 +238,9 @@ fn main() {
         let (uint1, uint2) = (1u8, 100u8);
         option::some_u8_value(&uint1);
         option::some_u8_value(&uint2);
-
+        if let Some(6) = six {
+            println!("use if let match specific case");
+        }
     }
 
     println!("\n\n");

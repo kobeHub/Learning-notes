@@ -38,11 +38,13 @@ pub fn create(email: String, username: String) {
     };
     println!("{:?}", user2);
 
-    let dim = Twodim{
+    let mut dim = Twodim{
         point: Point(1, 2, 3),
         color: Color(23, 78, 9)
     };
-    println!("Struct with struct fileld:{:?}", dim);
+    println!("Origin dim: {:?}", dim);
+    dim.point.1 = 1000;
+    println!("After mut:{:?}", dim);
 
     let acc = Account(user1, "Just a password".to_string());
     println!("{:?}", acc);
