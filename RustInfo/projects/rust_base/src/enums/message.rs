@@ -2,6 +2,7 @@ use crate::ip_addr;
 
 // enums of message
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum Message {
     Quit(ip_addr::IpAddr),
     Move {x: i32, y: i32},

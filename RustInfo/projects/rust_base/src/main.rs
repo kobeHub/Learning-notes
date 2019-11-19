@@ -113,6 +113,7 @@ fn immutable_test() {
     println!("NUm after loop compute {}", a);
 }
 
+#[allow(dead_code)]
 fn iter_out() {
     let mut data = [0i32; 5];
     for i in 0..5 {

@@ -1,5 +1,6 @@
 // define the Coin enumeration
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum Coin {
     Penny,
     Nickel,
@@ -8,6 +9,7 @@ pub enum Coin {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum UsState {
     Alabama,
     Alaska,

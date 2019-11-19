@@ -24,6 +24,7 @@ fn get_file(filename: &str) -> String {
 }
 
 // Read file return a Result enum
+#[allow(dead_code)]
 fn read_from_file(filename: &str) -> Result<String, io::Error> {
     let f = File::open(filename);
 
@@ -42,6 +43,7 @@ fn read_from_file(filename: &str) -> Result<String, io::Error> {
 
 
 // propagating a error case, using a ? operator
+#[allow(dead_code)]
 fn read_contents(filename: &str) -> Result<String, io::Error> {
     //let mut f = File::open(filename)?;
     let mut s = String::new();
