@@ -47,3 +47,13 @@ pub fn three_format() {
     println!();
 
 }
+
+pub fn string_join() {
+    let s1 = String::from("Tatco");
+    let s2 = "Tuesday".to_string();
+    let s3: String = "LeBorn James".into();
+    // s1 onwership move to result
+    let result = s1 + "-" + &s2 + "-" + &s3;
+    println!("parts: {} {}", s2, s3);
+    println!("join: {}", result);
+}

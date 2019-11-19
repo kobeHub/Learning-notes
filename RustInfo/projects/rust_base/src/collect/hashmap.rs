@@ -35,9 +35,12 @@ pub fn update() {
     scores.insert(String::from("red"), 50);
     println!("{:?}", scores);
 
-    scores.entry(String::from("Yellow")).or_insert(90);
+    scores.entry(String::from("Yellow"))
+        .and_modify(|e| { *e += 1;})
+        .or_insert(90);
     scores.entry(String::from("Pink")).or_insert(88);
     scores.insert(String::from("Red"), 1999);
+    scores.entry(String::from("Green")).or_default();
     println!("{:?}", scores);
 }
 
@@ -51,5 +54,3 @@ pub fn count_words(words: &str) {
     }
     println!("{:?}", map);
 }
-
-

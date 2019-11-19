@@ -249,6 +249,7 @@ fn main() {
         println!("\nThe vector part:");
        //mod collect;
         use crate::collect::{string, vector, hashmap, solution};
+        use solution::EmployeeTable;
         vector::test_vec();
         let v1 = vec![12, 23, 55];
         let mut v2 = vec![12, 55, 7];
@@ -261,6 +262,15 @@ fn main() {
         string::build_string();
         string::length_test();
         string::three_format();
+        string::string_join();
+        {
+            println!("macro format! dosen't need ownership move");
+            let s1 = "onwer".to_string();
+            let s2 = String::from("is here");
+            let res = format!("{}-{}", s1, s2);
+            println!("s1: {}  s2: {}", s1, s2);
+            println!("join: {}", res);
+        }
 
         println!("HashMap usage:");
         hashmap::create();
@@ -280,9 +290,10 @@ fn main() {
         let re2 = solution::big_latin(&word2);
         println!("Translate {}, {} to big latin: {}, {}",
                  word1, word2, re1, re2);
-        use std::collections::HashMap;
 
         /*
+        use std::collections::HashMap;
+
         let mut records = HashMap::new();
         let mut vec = vec!["Leborn", "Kobe"];
         records.insert(String::from("base"), &mut vec);
@@ -291,5 +302,23 @@ fn main() {
         let part = "sail";
         solution::employee_simu(emp1, part, &mut records);
         println!("After insert:{:?}", records);*/
+
+        println!("\n\nThe employee table usage: (HashMap & Vec)");
+        let mut table = EmployeeTable::new();
+        table.insert_into("AI-platform", "Jack Ma");
+        table.insert_into("AI-platform", "Inno Jia");
+        table.insert_into("AI-platform", "Peeny Ma");
+        table.insert_into("HR", "Jordan");
+        table.insert_into("QA", "Michale");
+        print!("AI-platform deploy: ");
+        if let Some(v) = table.get_deploy("AI-platform") {
+            println!("{:?}", v);
+        } else {
+            println!("No employee");
+        }
+        println!("Employee table summary:");
+        for (k, v) in table.summary() {
+            println!("{}: {:?}", k, v);
+        }
     }
 }

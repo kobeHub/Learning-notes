@@ -13,6 +13,7 @@ pub fn plus_one_(x: Option<i32>) -> Option<i32> {
         None => None,
         Some(x) => Some(x + 1),
     }
+
 }
 
 pub fn some_u8_value(x: &u8) {
@@ -23,4 +24,3 @@ pub fn some_u8_value(x: &u8) {
         _ => (),
     }
 }
-
