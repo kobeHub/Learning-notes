@@ -1,8 +1,6 @@
 use std::fs::{self, File};
 use std::io::{self, prelude::*, ErrorKind};
 
-
-
 fn get_file(filename: &str) -> String {
     let f = File::open(filename);
     let mut f = match f {
