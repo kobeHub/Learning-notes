@@ -8,8 +8,11 @@ pub fn number_feature(data: &mut Vec<i32>) -> (f64, i32, i32) {
     let data1 = data.clone();
     for i in data1 {
         sum += i;
-        let time = times.entry(i).or_default();
-        *time +=  1;
+        // let time = times.entry(i).or_default();
+        // *time +=  1;
+        times.entry(i)
+            .and_modify(|e| {*e += 1})
+            .or_default();
     }
     let mean = (sum as f64) / (data.len() as f64);
     data.sort();

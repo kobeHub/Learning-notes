@@ -8,28 +8,32 @@ pub fn create() {
 
     let teams = vec![String::from("Leborn James"), String::from("Steven Curry")];
     let ini_score= vec![10, 5];
-    let team_socres: HashMap<_, _> = teams.iter().zip(ini_score.iter()).collect();
+    let team_scores: HashMap<_, _> = teams.iter().zip(ini_score.iter()).collect();
     println!("The two hashmap:");
-    println!("{:?}, {:?}", scores, team_socres);
+    println!("{:?}, {:?}", scores, team_scores);
     for (k, v) in &scores {
         print!("{}; {}; ", k, v);
     }
     println!();
-    for (k, v) in &team_socres {
+    for (k, v) in &team_scores {
         print!("{}: {}; ", k, v);
     }
     println!();
 
     println!("Now try to get the score of the LBJ team:");
-    if let Some(v) = team_socres.get(&String::from("Leborn James")) {
+    if let Some(v) = team_scores.get(&String::from("Leborn James")) {
         println!("Score is: {}", v);
     } else {
         println!("Error key!");
     }
+    match team_scores.get(&String::from("Hardon")) {
+        Some(v) => println!("Hardon's socre: {}", v),
+        None => println!("There is no Hardon key")
+    }
 }
 
 pub fn update() {
-    let mut scores = HashMap::new();
+    let mut scores: HashMap<String, i64> = HashMap::new();
     scores.insert(String::from("Blue"), 20);
     scores.insert(String::from("Yellow"), 100);
     scores.insert(String::from("red"), 50);

@@ -7,7 +7,7 @@ pub fn test_vec() {
     v_mut.push(10000);
     let first = &v_mut[0];
     let second = &v_mut[1];
-    //v_mut.push(13);e
+    // v_mut.push(13);
     println!("v:{:?}, v_mut:{:?}", v, v_mut);
     println!("the first element of v:{}, v_mut:{}, {}", &v[0], first, second);
     match v_mut.get(10) {
