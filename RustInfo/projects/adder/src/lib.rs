@@ -9,10 +9,10 @@ mod tests {
 
     #[test]
     fn return_result() -> Result<(), String> {
-        if 2 + 2 == 4 {
+        if 2 + 3 == 5 {
             Ok(())
         } else {
-            Err(String::from("two add two does not equal three"))
+            Err(String::from("two add equal three"))
         }
     }
 
@@ -21,7 +21,7 @@ mod tests {
         //use crate::shapes::Rectangle;
         let r1 = Rectangle {
             width: 34.,
-            length: 120.1, 
+            length: 120.1,
         };
         let r2 = Rectangle{length: 12.5, width: 7.};
         assert!(!r2.can_hold(&r1));
@@ -39,7 +39,7 @@ mod tests {
         let result = msg::greeting("Cargo");
         assert!(
             result.contains("Cargo"),
-            "Greeting did not contain the name value:{}", result    
+            "Greeting did not contain the name value:{}", result
         );
     }
 
