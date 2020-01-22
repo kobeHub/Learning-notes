@@ -13,6 +13,13 @@ impl<T, U> Point<T, U> {
     pub fn y(&self) -> &U {
         &self.y
     }
+    // method with generics
+    pub fn mixup<V, W>(self, other: Point<V, W>) -> Point<T, W> {
+        Point {
+            x: self.x,
+            y: other.y
+        }
+    }
 }
 
 // Methods for the specific type

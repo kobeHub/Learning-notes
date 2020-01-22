@@ -26,7 +26,7 @@ fn main() {
         println!("&str lives long enough to a borrow, {}", result);
 
         println!("Now try to find the first world of a sentence:");
-        let sentence = "JUst a sentence";
+        let sentence = "Just a sentence";
         println!("{}, and first world {}", sentence, largest::first_word(sentence));
     }
 
@@ -38,6 +38,8 @@ fn main() {
         println!("Two dimision:{}, {}", two_d.x(), two_d.y());
         let fpoint = Point{x: 3.0, y: 4.0};
         println!("vector {:?} length: {}", fpoint, fpoint.distance_from_origin());
+        let mix = diff.mixup(fpoint);
+        println!("After mixup: {:?}", mix);
     }
 
     {
@@ -57,13 +59,13 @@ fn main() {
         /*let name = novel.split(';')
             .next()
             .expect("Couldn't find a ;");
-        
+
         let con = novel.split(';')
             .next()
             .expect("Could not find a ;");*/
         let contents: Vec<_> = novel.split(';')
             .collect();
-        let i = ImportantExcept{
+        let mut i = ImportantExcept{
             name: contents[0],
             except: contents[1],
         };
@@ -71,5 +73,6 @@ fn main() {
         println!("The level of the exception: {}", i.level());
         println!("The except message: {}", i.except_and_announce("!!Caution!!"));
 
+        i.multi_args(";;Caution;;", "another exception");
     }
 }

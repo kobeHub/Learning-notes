@@ -17,3 +17,12 @@ impl<'a> ImportantExcept<'a> {
         self.except
     }
 }
+
+impl <'a> ImportantExcept<'a> {
+    pub fn multi_args(&mut self, ann: &str, newName: &'a str) -> &str {
+        println!("Change exception with lifetime ignore");
+        println!("Announcement: {}", ann);
+        self.name = newName;
+        self.name
+    }
+}
