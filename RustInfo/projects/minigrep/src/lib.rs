@@ -41,7 +41,9 @@ impl Config {
             None => return Err("Didn't pass a file"),
         };
 
-        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+        // `CASE` is true if there is no CASE_SENSITIVE env var
+        let case_sensitive = env::var("CASE_SENSITIVE").is_err();
+        // println!("Case: {}", case_sensitive);
         Ok(Config {query, filename, case_sensitive})
     }
 }
@@ -74,7 +76,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     /*****************version 0.1************************
     // 函数定义中返回值与contens具有相同的生命周期，所以
-    // 返回值包含的应该是 contens 的string slice
+    // 返回值包含的应该是 contents 的string slice
     let mut result = Vec::new();
     for line in contents.lines() {
         if line.contains(query) {
