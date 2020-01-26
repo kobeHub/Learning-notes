@@ -1,0 +1,1 @@
+/home/inno/Learning-notes/RustInfo/projects/pointer/target/debug/pointer-007bef846340c54a: /home/inno/Learning-notes/RustInfo/projects/pointer/src/lib.rs /home/inno/Learning-notes/RustInfo/projects/pointer/src/main.rs

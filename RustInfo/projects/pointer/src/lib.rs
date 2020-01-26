@@ -1,6 +1,6 @@
 pub mod mybox {
-    use std::ops::Deref;
-        
+    use std::ops::Deref
+
     #[derive(Debug)]
     pub struct MyBox<T>(T);
 
@@ -31,7 +31,7 @@ pub mod mybox {
 
 pub mod list {
     use std::rc::Rc;
-    
+
     #[derive(Debug)]
     pub enum List {
         Cons(i32, Rc<List>),

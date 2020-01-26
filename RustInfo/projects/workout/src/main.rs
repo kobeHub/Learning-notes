@@ -9,6 +9,7 @@ fn main() {
     generate::generate_work_out(simulated_user_specified_value, simulated_random_num);
     //process_long::
     move_to_clouster();
+    generate::use_mut_fn();
 
     //let test = (0..10); std::ops::Range
     //let () = test;

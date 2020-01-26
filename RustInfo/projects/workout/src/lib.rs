@@ -1,6 +1,23 @@
 pub mod generate {
-    use crate::simulated:: Cacher;
+    use super::simulated::Cacher;
     use std::{thread, time::Duration};
+
+    #[derive(Debug)]
+    pub struct Point {
+        x: i32,
+        y: i32
+    }
+
+    pub fn use_mut_fn() {
+        let move_left = |p: &mut Point| {
+            p.x -= 1;
+            p.y -= 1;
+        };
+        let mut p = Point{x: 12, y:15};
+        println!("{:?}", p);
+        move_left(&mut p);
+        println!("{:?}", p);
+    }
 
     /* Generate the workout plan via an expensive calculation */
     pub fn generate_work_out(intensity: u32, random_num: u32) {
@@ -9,7 +26,7 @@ pub mod generate {
             thread::sleep(Duration::from_secs(2));
             num
         });
-        
+
         if intensity < 25 {
             println!(
                 "Today, do {} pushups!",
@@ -66,7 +83,7 @@ mod simulated {
             }
         }
 
-        pub fn value(&mut self, arg: u32) -> u32 {            
+        pub fn value(&mut self, arg: u32) -> u32 {
             match self.value.get(&arg) {
                 None => {
                     let v = (self.calculation)(arg);
@@ -80,7 +97,7 @@ mod simulated {
 }
 /*
 pub mod process_long {
-    use crate::simulated::Cacher;
+    use crante::simulated::Cacher;
     use std::{thread, time::Duration};
 
     pub fn str_expensive() {
@@ -128,18 +145,18 @@ mod test {
         let mut p1 = Pair::new(1288889, "Leborn James", 0);
         assert_eq!(p1.name(), "Leborn James");
         assert_eq!(p1.id(), 1288889);
-    
-        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
-        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
-        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
-        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
-        assert_eq!(p1.next(), Some((1288889, "Leborn James")));    
-        assert_eq!(p1.next(), None);    
-        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 2)));    
-        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 3)));    
-        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 4)));    
-        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 5)));    
-        //assert_eq!(p1.next(), None);    
+
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));
+        assert_eq!(p1.next(), Some((1288889, "Leborn James")));
+        assert_eq!(p1.next(), None);
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 2)));
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 3)));
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 4)));
+        //assert_eq!(p1.next(), Some(Pair::new(1288889, "Leborn James", 5)));
+        //assert_eq!(p1.next(), None);
     }
 
     #[test]
@@ -148,7 +165,50 @@ mod test {
             .map(|(a, b)| a * b)
             .filter(|x| x % 3 == 0)
             .sum();
+        let cnt: Vec<_> = Counter::new().skip(1).zip(Counter::new())
+            .map(|(a, b)| a * b)
+            .filter(|x| x % 3 == 0)
+            .collect();
+        // println!("{:?}", cnt);
+        assert_eq!(vec![6, 12], cnt);
         assert_eq!(18, sum);
+    }
+
+    #[test]
+    fn immutable_iterator_usage() {
+        // 使用iter()方法可以获取一个Iter实例
+        // Iter, IntoIter, IterMut 这三个结构体都实现了Iterator trait
+        // Iter, IntoIter 得到元素的不可变引用，IntoIter获取元素的所有权
+        // IterMut 获取可变引用
+        let data = vec![12, 23_100, 300];
+        let mut iter = data.iter();
+        assert_eq!(Some(&12), iter.next());
+        assert_eq!(Some(&23100), iter.next());
+        assert_eq!(Some(&300), iter.next());
+
+        println!("{:?}", data);
+    }
+
+    #[test]
+    fn move_iterator_usage<'a>() {
+        let data: Vec<&'a str> = vec!["Just", "a", "test"];
+        let mut iter = data.into_iter();
+        assert_eq!(Some("Just"), iter.next());
+        assert_eq!(Some("a"), iter.next());
+        assert_eq!(Some("test"), iter.next());
+        // incompatible code
+        // println!("{:?}", data);
+    }
+
+    #[test]
+    fn mutable_iterator_usage() {
+        let data = &mut[12, 76, 90];
+        let mut iter = data.iter_mut();
+
+        assert_eq!(*iter.next().unwrap() + 1, 13);
+        assert_eq!(*iter.next().unwrap() - 1, 75);
+        assert_eq!(*iter.next().unwrap() + 2, 92);
+        println!("Mutable iterator usage: {:?}", data);
     }
 }
 
@@ -192,7 +252,7 @@ pub mod iterator_test {
     impl<'a> Iterator for Pair<'a> {
         type Item = (u32, &'a str);    // Define the `next()` method return type
 
-        // Use the method of the `Iterator` trait to get the 
+        // Use the method of the `Iterator` trait to get the
         // element tuple for six times
         fn next(&mut self) -> Option<Self::Item> {
             self.count += 1;

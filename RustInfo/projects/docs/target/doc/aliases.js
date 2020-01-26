@@ -1,0 +1,10 @@
+var ALIASES = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};
+ALIASES['docs'] = {};

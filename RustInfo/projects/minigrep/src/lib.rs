@@ -131,6 +131,8 @@ Pick here";
     fn case_insentive() {
         let query = "rUSt";
         let contents = "\
+
+
 Rust,
 safe, fast, productive,
 Pick here,
