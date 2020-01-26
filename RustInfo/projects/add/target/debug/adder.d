@@ -1,0 +1,1 @@
+/home/inno/Learning-notes/RustInfo/projects/add/target/debug/adder: /home/inno/Learning-notes/RustInfo/projects/add/add-one/src/lib.rs /home/inno/Learning-notes/RustInfo/projects/add/adder/src/main.rs
