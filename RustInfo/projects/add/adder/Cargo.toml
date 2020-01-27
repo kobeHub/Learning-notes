@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies]
 add-one = { path = "../add-one" }
+my-box = { path = "../my-box" }

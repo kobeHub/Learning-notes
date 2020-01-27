@@ -2,4 +2,6 @@
 members = [
         "adder",
         "add-one",
+        "my-box",
+        "mock",
 ]

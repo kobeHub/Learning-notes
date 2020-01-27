@@ -10,6 +10,7 @@ name = "adder"
 version = "0.1.0"
 dependencies = [
  "add-one 0.1.0",
+ "my-box 0.1.0",
 ]
 
 [[package]]
@@ -34,6 +35,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "libc"
 version = "0.2.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "mock"
+version = "0.1.0"
+
+[[package]]
+name = "my-box"
+version = "0.1.0"
 
 [[package]]
 name = "rand"
