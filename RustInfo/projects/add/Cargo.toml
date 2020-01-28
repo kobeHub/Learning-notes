@@ -4,4 +4,6 @@ members = [
         "add-one",
         "my-box",
         "mock",
+        "node",
+        "node-usage",
 ]
