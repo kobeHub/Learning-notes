@@ -18,9 +18,9 @@ use std::rc::{Rc, Weak};
 /// 父节点不该被丢弃
 #[derive(Debug)]
 pub struct Node {
-    value: i32,
-    parent: RefCell<Weak<Node>>,
-    children: RefCell<Vec<Rc<Node>>>,
+    pub value: i32,
+    pub parent: RefCell<Weak<Node>>,
+    pub children: RefCell<Vec<Rc<Node>>>,
 }
 
 #[cfg(test)]
