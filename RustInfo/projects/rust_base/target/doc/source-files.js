@@ -1,2 +1,0 @@
-var N = null;var sourcesIndex = {};
-sourcesIndex['rust_base'] = {"name":"","dirs":[{"name":"collect","dirs":[],"files":["hashmap.rs","mod.rs","solution.rs","string.rs","vector.rs"]},{"name":"enums","dirs":[],"files":["coin.rs","ip_addr.rs","message.rs","mod.rs","option.rs"]},{"name":"string","dirs":[],"files":["mod.rs","slice.rs","str_string.rs"]},{"name":"structs","dirs":[],"files":["create_struct.rs","mod.rs","rectangle.rs"]}],"files":["main.rs"]};

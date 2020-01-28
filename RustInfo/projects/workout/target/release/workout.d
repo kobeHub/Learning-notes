@@ -1,1 +1,0 @@
-/home/inno/Learning-notes/RustInfo/projects/workout/target/release/workout: /home/inno/Learning-notes/RustInfo/projects/workout/src/lib.rs /home/inno/Learning-notes/RustInfo/projects/workout/src/main.rs

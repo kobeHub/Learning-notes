@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["RcList","Recursive List based on `Rc`"]],"struct":[["CSPointer","Customer smart pointer"],["MyBox","The basic box struct, use tuple struct"]]});

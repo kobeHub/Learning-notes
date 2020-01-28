@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["mix","Mix two primary color to create secondary color"]]});

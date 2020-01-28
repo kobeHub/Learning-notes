@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["PrimaryColor","Use `RGB` color mode, the primary color"],["SecondaryColor","Use `RGB` color mode, the secondary color"]]});

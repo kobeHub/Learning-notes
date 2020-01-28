@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["add_one","Add one to the spefic `i32`"]]});
