@@ -1,0 +1,9 @@
+[package]
+name = "macro-usage"
+version = "0.1.0"
+authors = ["Inno Jia <jdgets111@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+hello_macro = { path = "../hello_macro"}
+hello_macro_derive = { path = "../hello_macro/hello_macro_derive"}
