@@ -1,7 +1,15 @@
 use actix_http::http;
+use bytes::Bytes;
 use std::sync::Mutex;
+use serde::Serialize;
+use serde_json;
+use serde::Deserialize;
+use futures::future::{ready, ok, Ready};
+use futures::stream::once;
 use listenfd::ListenFd;
-use actix_web::{web, guard, get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, guard, get, post};
+use actix_web::{App, Error, Either, HttpRequest,
+                HttpResponse, HttpServer, Responder, Result};
 
 async fn hello() -> impl Responder {
     HttpResponse::Ok()
@@ -14,6 +22,79 @@ async fn hello() -> impl Responder {
 async fn index() -> impl Responder {
     HttpResponse::Ok()
         .body("Welcome to InnoHub API!\n")
+}
+
+#[get("/object")]
+async fn sim_obj() -> impl Responder {
+    SimObj("A simple tuple struct")
+}
+
+#[post("/users")]
+async fn create_users(info: web::Json<User>) -> impl Responder {
+    info.into_inner()
+}
+
+#[post("/stream")]
+async fn from_stream() -> HttpResponse {
+    let body = once(ok::<_, Error>(Bytes::from_static(b"Jack Ma")));
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .streaming(body)
+}
+
+#[post("status")]
+async fn diff_status(info: web::Json<Current>) -> RegisteredResult {
+    if info.value > 100 {
+        Either::A(HttpResponse::BadRequest().body("The task is done!"))
+    } else {
+        Either::B(Ok("The task is doing..."))
+    }
+}
+
+#[derive(Serialize)]
+struct SimObj(&'static str);
+
+impl Responder for SimObj {
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+
+        ready(Ok(HttpResponse::Ok()
+                 .content_type("application/json")
+                 .body(body)
+        ))
+    }
+}
+
+type RegisteredResult = Either<HttpResponse, Result<&'static str, Error>>;
+
+#[derive(Deserialize)]
+struct Current {
+    value: u32,
+}
+
+#[derive(Deserialize, Serialize)]
+struct User {
+    id: usize,
+    name: String,
+    sex: char,
+}
+
+impl Responder for User {
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+
+        ready(Ok(HttpResponse::Ok()
+                 .content_type("application/json")
+                 .body(body)
+        ))
+    }
 }
 
 struct MetaInfo<'a> {
@@ -72,6 +153,7 @@ async fn main() -> std::io::Result<()>{
                 // use guard to set route or scope filter
                 .guard(guard::Header("Token-access", "justatoken"))
                 .service(index)
+                .service(sim_obj)
                 // 由于Scope并没有指定唯一的资源实体，所以需要path参数指定
                 // 唯一URI，然后指定相应的router
                 .route("/hello", web::get().to(hello))
@@ -84,11 +166,15 @@ async fn main() -> std::io::Result<()>{
                         |req| req.headers()
                             .contains_key("content-type")
                     ))
+                    .service(create_users)
                     .service(name)
+                    .service(from_stream)
+                    .service(diff_status)
             )
             .service(
                 web::scope("/client")
                     .configure(scoped_config)
+                    .service(diff_status)
             )
     });
 
