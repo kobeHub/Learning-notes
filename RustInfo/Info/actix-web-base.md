@@ -169,6 +169,101 @@ let app = App::new().service(
             )
 ```
 
+## 3. 请求处理
+
+一个`handler`是一个异步方法接受可以从一个HTTP 请求中提取的，0个或多个参数（ie. *impl FromRequest*）,并且返回一个可以转化为`HttpRequest`的类型(ie. *impl Responder*)
+
+Request handler 的处理过程可以分为两阶段，首先handler 对象被调用，返回一个实现了`Responder` trait的对象，接着调用`respond_to` 转化为`HttpResponse`或`Error`。默认很多标准类型都实现了`Responder` trait，例如:
+
++ `&'a String`
++ `&'static [u8]`
++ `&'static str`
++ `Option<T>`
++ `Result<T, E>`
++ `String`
++ `(T, actix_web::http::StatusCode)`
+
+### 3.1 自定义类型作为Responder
+
+实现`Responder` trait 的类型都可以作为handler返回
+
+```rust
+use actix_web::{Error, HttpRequest, HttpResponse, Responder};
+use serde::Serialize;
+use futures::future::{ready, Ready};
+
+#[derive(Serialize)]
+struct MyObj {
+    name: &'static str,
+}
+
+// Responder
+impl Responder for MyObj {
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+
+        // Create response and set content type
+        ready(Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body(body)))
+    }
+}
+
+async fn index() -> impl Responder {
+    MyObj { name: "user" }
+}
+```
+
+### 3.2 streaming
+
+Response 的响应体可以异步生成，body必须实现`Stream<Item=Bytes, Error=Error>` trait
+
+```rust
+use actix_web::{web, App, HttpServer, Error, HttpResponse};
+use bytes::Bytes;
+use futures::stream::once;
+use futures::future::ok;
+
+async fn index() -> HttpResponse {
+    let body = once(ok::<_, Error>(Bytes::from_static(b"test")));
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .streaming(body)
+}
+
+#[actix_rt::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().route("/async", web::to(index)))
+        .bind("127.0.0.1:8088")?
+        .run()
+        .await
+}
+```
+
+### 3.3 返回两种类型
+
+可以使用`actix_web::Either`包装两种不同的类型作为返回值：
+
+```rust
+use actix_web::{Either, Error, HttpResponse};
+
+type RegisterResult = Either<HttpResponse, Result<&'static str, Error>>;
+
+fn index() -> RegisterResult {
+    if is_a_variant() {
+        // <- choose variant A
+        Either::A(HttpResponse::BadRequest().body("Bad data"))
+    } else {
+        // <- variant B
+        Either::B(Ok("Hello!"))
+    }
+}
+```
+
 ## 2. 增量更新
 
 进行web开发时为了实现快速开发以及测试，可以借助`systemfd`， `cargo-watch` 进行自动加载。`systemfd`会开启一个`socket`连接，并传递给`cargo-watch`，`cargo-watch`负责监控代码变化，并且进行实时编译，并且将服务暴露于`systemfd`提供的`socket`端口下。
