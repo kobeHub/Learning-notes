@@ -57,6 +57,11 @@ async fn add_one(data: web::Data<AppState>) -> impl Responder {
     format!("After add one: {}", data.count.load(Ordering::Relaxed))
 }
 
+#[post("/querys")]
+async fn create_query(info: web::Query<Data>) -> Result<String> {
+    Ok(format!("The query params: {}", info.content))
+}
+
 #[derive(Deserialize)]
 struct UserAddi {
     sex: char,
@@ -99,6 +104,7 @@ async fn main() -> std::io::Result<()> {
                      .service(create_users)
                      .service(get_users)
                      .service(create_forms)
+                     .service(create_query)
                      .service(
                          web::resource("/annos")
                              .app_data(

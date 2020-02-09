@@ -272,6 +272,26 @@ fn index() -> RegisterResult {
 }
 ```
 
+## 4. 基于类型安全的信息提取
+
+`actix-web`有基于类型安全的request信息的访问方式，被称为*extractor*（ie. `impl FromRequest`），默认提供了：
+
++ Path
+
+  `Path` 提供了任意可以从`Request‘s Path` 提取的信息，可以通过指定资源`url`格式中的变量（可以被反序列化），使用`Path` wraper 获取。变量段可以使用图tuple的数据格式，变量可以是基本类型或者任何实现了`serde::Deserialize` trait 的结构体
+
++ Query
+
+  `Query` 类型提供了可用于request query的提取功能
+
++ Json
+
+  `Json` 可以将一个请求体反序列化为一个结构体，该结构体必须实现了`Deserialize` trait
+
++ Form
+
+  当只可以使用`url-encodered` 格式数据时，需要使用`Form`类型
+
 ## 2. 增量更新
 
 进行web开发时为了实现快速开发以及测试，可以借助`systemfd`， `cargo-watch` 进行自动加载。`systemfd`会开启一个`socket`连接，并传递给`cargo-watch`，`cargo-watch`负责监控代码变化，并且进行实时编译，并且将服务暴露于`systemfd`提供的`socket`端口下。
