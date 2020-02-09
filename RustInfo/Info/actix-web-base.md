@@ -52,6 +52,14 @@ let app = App::new()
 
 `App::app_data()` 方法可以存放应用全局数据，可以使用`HttpRequest::app_data`在运行时获取 。
 
+**`app_data()`与`data（）`的区别:**
+
++ `data()`: 用于设置应用状态，数据由`Data<T>`类型包装，可用于同一个命名域下所有route、middleware 使用
+
+  而且对于应用状态，默认**每一个线程都有一份数据拷贝**，所以需要同时使用时需要借助`Arc`或者原子变量
+
++ `app_data()` : 用于存储应用级别的任意数据，也可以用于存储`web::Data<T>`用于应用状态提取
+
 ### 1.3 命名域
 
 使用`web::scope`方法设定具有相同前缀的routers。
