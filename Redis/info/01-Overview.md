@@ -66,6 +66,27 @@ Lists是简单字符串的双向列表，按照插入顺序排列，可以使用
 Set是string的无序集合，可以在O(1)的时间复杂度插入、删除、校验元素是否存在。
 
 + 使用Set进行唯一性校验，对于一个网站独立IP的page view量，可以使用`SADD`将一个元素加入到set中
++ 支持集合的所有操作，`SINTER` 进行交集操作，`SUNION`并集，`SDIFF` 进行多个集合差集操作；`SCARD` 获取集合元素数量，
++ 随机获取元素，可以使用SPOP, SRANDMEMBER
+
+### 2.4 Hash
+
+Redis hash类型是string 到string的哈希表，用于表示对象具有天然优势。
+
+```shell
+HSET key field value
+HMSET key f1 v1 f2 v2...
+HGET key field
+HMGET key f1 f2
+HDEL key field ...
+HLEN key
+HKEYS key
+HVALS key
+```
+
+### 2.5 Sorted sets
+
+与Redis集合类似，有序集合也是不重复的string集合，但是每一个元素都与一个分数相关联。可以使用`ZADD key [NX|XX] [CH] [INCR] score member [score member...]` 添加元素，并且指定score。
 
 ### 2.1 redis 键值规范
 
