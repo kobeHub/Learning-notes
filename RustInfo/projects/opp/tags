@@ -1,0 +1,28 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/a3c87ab5/
+Button	src/lib.rs	/^    impl Draw for Button {$/;"	c	module:gui
+Button	src/lib.rs	/^    pub struct Button {$/;"	s	module:gui
+Draw	src/lib.rs	/^pub trait Draw {$/;"	i
+Screen	src/lib.rs	/^impl Screen {$/;"	c
+Screen	src/lib.rs	/^pub struct Screen {$/;"	s
+SelectBox	src/lib.rs	/^    impl Draw for SelectBox {$/;"	c	module:gui
+SelectBox	src/lib.rs	/^    pub struct SelectBox {$/;"	s	module:gui
+components	src/lib.rs	/^    pub components: Vec<Box<dyn Draw>>,$/;"	m	struct:Screen
+draw	src/lib.rs	/^        fn draw(&self) {$/;"	P	implementation:gui::Button
+draw	src/lib.rs	/^        fn draw(&self) {$/;"	P	implementation:gui::SelectBox
+draw	src/lib.rs	/^    fn draw(&self);$/;"	P	interface:Draw
+gui	src/lib.rs	/^pub mod gui {$/;"	n
+height	src/lib.rs	/^        pub height: i32,$/;"	m	struct:gui::Button
+height	src/lib.rs	/^        pub height: i32,$/;"	m	struct:gui::SelectBox
+label	src/lib.rs	/^        pub label: String,$/;"	m	struct:gui::Button
+main	src/main.rs	/^fn main() {$/;"	f
+options	src/lib.rs	/^        pub options: Vec<String>,$/;"	m	struct:gui::SelectBox
+run	src/lib.rs	/^    pub fn run(&self) {$/;"	P	implementation:Screen
+width	src/lib.rs	/^        pub width: i32,$/;"	m	struct:gui::Button
+width	src/lib.rs	/^        pub width: i32,$/;"	m	struct:gui::SelectBox
