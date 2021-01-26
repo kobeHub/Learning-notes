@@ -23,7 +23,8 @@ func main() {
   c, d, e := 123, "Test", "go"
 
   fmt.Println(5/2)
-  fmt.Println(a, b, c, d, e)
+  fmt.Println(5 / 2.0)
+	fmt.Println(a, b, c, d, e)
   fmt.Println("Type test:")
   fmt.Printf("a: %T, size: %d, b: %T, size: %d", a, unsafe.Sizeof(a), b, unsafe.Sizeof(b))
 

@@ -13,7 +13,7 @@ LENGTH="15"
 #done
 function getbase() {
   for i in {1..10000}
-  do
+  d
     strs=`openssl rand -base64 15`
     echo "$strs" >> $1
   done

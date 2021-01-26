@@ -5,5 +5,5 @@ package main
 type Bike struct {
   Maker string
   model string
-  Price float64
+  Price float32
 }

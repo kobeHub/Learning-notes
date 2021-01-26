@@ -1,15 +1,15 @@
 package main
 
 import (
-  "fmt"
+	"fmt"
 )
 
 func main() {
-  fmt.Println("Tests for inner package struct")
+	fmt.Println("Tests for inner package struct")
 
-  var b Bike
-  b.Maker = "BMW"
-  b.model = "Tk-100"
-  b.Price = 1200.5
-  fmt.Printf("The bike %v, %T\n", b, b)
+	var b mike
+	b.Maker = "BMW"
+	b.model = "Tk-100"
+	b.Price = 1200.5
+	fmt.Printf("The bike %v, %T\n", b, b)
 }

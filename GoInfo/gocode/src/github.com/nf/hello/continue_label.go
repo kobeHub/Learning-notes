@@ -16,5 +16,14 @@ LOOP:
 			}
 		}
 	}
+ANO_LOOP:
+for _, l := range LastName {
+	for i, _ := range FirstName {
+			fmt.Printf("last name: %s, first index: %v\n", l, i)
+			if l == "Kobe" {
+				break ANO_LOOP
+			}
+		}
+	}
 	fmt.Println("Done")
 }
