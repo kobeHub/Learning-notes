@@ -39,7 +39,7 @@ macro_rules! tuple_impls {
             $( $ntyp: ::std::fmt::Display  ),*
         {
             fn join_tuple(&self, sep: &str) -> String {
-                let parts: &[&::std::fmt::Display] = &[&self.$idx, $( &self.$nidx  ),*];
+                let parts: &[&(dyn (::std::fmt::Display))] = &[&self.$idx, $( &self.$nidx  ),*];
                 parts.iter().rev().map(|x| x.to_string()).collect::<Vec<_>>().join(sep)
             }
         }
@@ -72,7 +72,7 @@ fn immutable_test() {
     println!("{}", num1);
 
     let num2 = 1_235u32;
-    let num3 = 0xff_ffff;
+    let num3 = 0xff_ffffi32;
     let num4 = 0b0000_1111;
     let num5 = 0o77;
     let byte = b'a';
@@ -86,7 +86,7 @@ fn immutable_test() {
     println!("{}", str1);
     println!("The first ele of tuple: {}", tuple.0);
     assert_eq!(tuple.0, 3.3);
-    //assert_eq!(tuple.0, 3.3f64);
+    // assert_eq!(tuple.0, 3.3f64);
     //
     println!("now iteral the array:");
     let array = [12.0, 9.0 ,8., 11.];
