@@ -16,6 +16,7 @@ fn thread1(start: Arc<Barrier>, end: Arc<Barrier>) {
             start.wait();
             while rand::random::<u32>() % 8 != 0 {}
             unsafe {
+                // llvm_asm!("lfence" ::: "memory" : "volatile");
                 X = 1;
                 // swap these two lines for a `mfence` and not just compiler reordering
                 // llvm_asm!("mfence" ::: "memory" : "volatile");
@@ -34,6 +35,7 @@ fn thread2(start: Arc<Barrier>, end: Arc<Barrier>) {
             start.wait();
             while rand::random::<u32>() % 8 != 0 {}
             unsafe {
+                // llvm_asm!("sfence" ::: "memory" : "volatile");
                 Y = 1;
                 // swap these two lines for a `mfence` and not just compiler reordering
                 // llvm_asm!("mfence" ::: "memory" : "volatile");
