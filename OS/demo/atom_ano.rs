@@ -43,7 +43,7 @@ fn main() {
                     // `set`, then this statement will never be reached.
                     println!("Reordered! {} > {}", atom, norm);
                 }
-                v = atom;
+                v = atom;Relaxed); //Ord
             }
         }));
     }
@@ -68,7 +68,7 @@ impl UsizePair {
             norm: UnsafeCell::new(v),
         }
     }
-
+Relaxed); //Ord
     pub fn get(&self) -> (usize, usize) {
         let atom = self.atom.load(Ordering::Acquire); //Ordering::Acquire
 
