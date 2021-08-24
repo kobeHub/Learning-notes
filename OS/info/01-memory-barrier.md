@@ -1,8 +1,8 @@
-# 内存屏障
+# 内存屏障 -- Part 1
 
 ## 1. 什么是内存屏障
 
-[内存屏障](https://en.wikipedia.org/wiki/Memory_barrier)**(Memory Barrier, membar, memory fence, or fen instruction)** ,是一种屏障指令,使得CPU以及编译器对于内存的操作强制执行顺序约束，在屏障指令前或者后的内存操作不进行指令重排。这就意味着，在屏障之前的指令保证在屏障之后的指令前执行。
+[内存屏障](https://en.wikipedia.org/wiki/Memory_barrier)**(Memory Barrier, membar, memory fence, or fen instruction)** ,是一种屏障指令,使得CPU以及编译器对于内存的操作强制执行顺序约束，*在屏障指令前或者后的内存操作不进行指令重排。*这就意味着，在屏障之前的指令保证在屏障之后的指令前执行。
 
 内存屏障的实现涉及硬件架构层面的知识，同时需要操作系统、编译器的配合，需要从这三个层面理解内存屏障。
 
@@ -77,3 +77,49 @@
 ## 3. 重排序
 
 除去可见性导致的伪重排序，实际的重排序包括编译器的优化，以及处理器的乱序执行。
+
+### 3.1 编译器优化
+
+与处理器乱序执行目的一致，与其等阻塞指令刷入内存，不如去执行其他指令，从而提高效率。与cpu乱序执行相比，编译器重排序可以完成更大范围，效果更好的乱序优化。在Java 中，可以通过`volatile` 关键字禁止编译器重排序。
+
+### 3.2 处理器乱序执行
+
+处理器层面的乱序优化节省了大量等待时间，提高了处理器的性能。
+所谓“乱序”只是被叫做“乱序”，实际上也遵循着一定规则：只要两个指令之间不存在数据依赖，就可以对这两个指令乱序。不必关心数据依赖的精确定义，可以理解为：**只要不影响程序单线程、顺序执行的结果，就可以对两个指令重排序。**
+
+## 4. 内存屏障举例
+
+Java 通过`volatile` 解决了编译器层面的可见性以及重排序的问题。而内存屏障则解决了硬件层面的可见性以及重排序问题。
+
+**屏障类型**
+
+| 屏障类型           | 指令示例                 | 说明                                                         |
+| ------------------ | ------------------------ | ------------------------------------------------------------ |
+| LoadLoad barrier   | Load1;LoadLoad;Load2     | 该屏障保证Load1的数据读取**先于**Load2及其之后的数据读取     |
+| StoreStore Barrier | Store1;StoreStore;Store2 | 保证Store1的数据写入立即刷入内存；先于Store2及其后的存储操作 |
+| LoadStore Barrier  | Load1; LoadStore; Store2 | 保证Load1 的数据读取先于Store2的数据写入                     |
+| StoreLoad Barrier  | Store1; StoreLoad; Load2 | 保证Store1 的数据写入立即刷入内存，优先于Load2及其之后所有的数据读写操作。使得该屏障之前的数据操作都在屏障前结束，屏障之后的数据操作都在屏障后开始 |
+
+StoreLoad Barriers同时具备其他三个屏障的效果，因此也称之为全能屏障（mfence），是目前大多数处理器所支持的；但是相对其他屏障，该屏障的开销相对昂贵。
+
+然而，除了mfence，不同的CPU架构对内存屏障的实现方式与实现程度非常不一样。相对来说，Intel CPU的强内存模型比DEC Alpha的弱复杂内存模型（缓存不仅分层了，还分区了）更简单。x86架构是在多线程编程中最常见的，下面讨论x86架构中内存屏障的实现。
+
+### X86平台的内存屏障
+
++ **`Store Barrier`**
+
+  `sfence` 指令实现了写屏障，相当于`StoreStore Barrier`。强制所有在sfence指令之前的store指令，都在该sfence指令执行之前被执行，发送缓存失效信号，并把store buffer中的数据刷出到CPU的L1 Cache中；所有在sfence指令之后的store指令，都在该sfence指令执行之后被执行。即，禁止对sfence指令前后store指令的重排序跨越sfence指令，使所有Store Barrier之前发生的内存更新都是可见的。
+
+  这里的“可见”，指修改值可见（内存可见性）且操作结果可见（禁用重排序）。下同。
+
++ **`Load Barrier`**
+
+  `lfence` 指令实现了读屏障，相当于`LoadLoad Barrier`。强制所有在lfence指令之后的load指令，都在该lfence指令执行之后被执行，并且一直等到load buffer被该CPU读完才能执行之后的load指令（发现缓存失效后发起的刷入）。即，禁止对lfence指令前后load指令的重排序跨越lfence指令，**配合Store Barrier，使所有Store Barrier之前发生的内存更新，对Load Barrier之后的load操作都是可见的。**
+
++ **`Full Barrier`**
+
+  `mfence`实现了全屏蔽，相当于`StroreLoad Barrier`。mfence指令综合了sfence指令与lfence指令的作用，强制所有在mfence指令之前的store/load指令，都在该mfence指令执行之前被执行；所有在mfence指令之后的store/load指令，都在该mfence指令执行之后被执行。即，禁止对mfence指令前后store/load指令的重排序跨越mfence指令，使所有Full Barrier之前发生的操作，对所有Full Barrier之后的操作都是可见的。
+  
+  
+
+ 
