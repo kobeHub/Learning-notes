@@ -2,7 +2,7 @@
 
 ## 1. 什么是内存屏障
 
-[内存屏障](https://en.wikipedia.org/wiki/Memory_barrier)**(Memory Barrier, membar, memory fence, or fen instruction)** ,是一种屏障指令,使得CPU以及编译器对于内存的操作强制执行顺序约束，*在屏障指令前或者后的内存操作不进行指令重排。*这就意味着，在屏障之前的指令保证在屏障之后的指令前执行。
+[内存屏障](https://en.wikipedia.org/wiki/Memory_barrier) *(Memory Barrier, membar, memory fence, or fen instruction)* ,是一种屏障指令,使得CPU以及编译器对于内存的操作强制执行顺序约束，*在屏障指令前或者后的内存操作不进行指令重排。*这就意味着，在屏障之前的指令保证在屏障之后的指令前执行。
 
 内存屏障的实现涉及硬件架构层面的知识，同时需要操作系统、编译器的配合，需要从这三个层面理解内存屏障。
 
