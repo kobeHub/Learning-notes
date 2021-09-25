@@ -51,7 +51,7 @@ sys_execve / sys_execveat
 
 ### 3.3 `do_execve`
 
-内核中实际执行`execv()`或`execve()`系统调用的程序是`do_execve()`，这个函数先打开目标映像文件，并从目标文件的头部（第一个字节开始）读入若干（当前Linux内核中是128）字节（实际上就是填充ELF文件头）， 读取文件头后可以判断文件格式，进而调用`serach_binary_handler()` 
+内核中实际执行`execv()`或`execve()`系统调用的程序是`do_execve()`，这个函数先打开目标映像文件，并从目标文件的头部（第一个字节开始）读入若干（├─systemd─┬─当前Linux内核中是128）字节（实际上就是填充ELF文件头）， 读取文件头后可以判断文件格式，进而调用`serach_binary_handler()` 
 
 ### 3.4 `search_bianry_handler()`
 
